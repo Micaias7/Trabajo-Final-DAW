@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { GestionModule } from './modules/gestion/gestion.module.js';
 
 
 @Module({
@@ -18,6 +20,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    AuthModule,
+    GestionModule,    
   ],
   controllers: [],
   providers: [],

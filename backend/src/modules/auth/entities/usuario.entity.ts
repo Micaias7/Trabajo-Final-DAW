@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { EstadosUsuariosEnum } from "../enums/estados-usuarios.enum.js";
+import { EstadosUsuariosEnum } from "../../gestion/enums/estados-usuarios.enum.js";
 import { RolesUsuariosEnum } from "../enums/roles-usuarios.enum.js";
 
 @Entity('usuarios')

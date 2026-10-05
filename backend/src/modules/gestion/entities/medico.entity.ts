@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Usuario } from "./usuario.entity.js";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Usuario } from "../../auth/entities/usuario.entity.js";
+
 
 @Entity('medicos')
 export class Medico {

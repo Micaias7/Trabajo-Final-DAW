@@ -1,5 +1,15 @@
 import { Controller, Get, Patch, Query, Req, UseGuards, Param, Body, ParseIntPipe } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { MedicosService } from '../services/medicos.service.js';
 import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
@@ -17,8 +27,29 @@ import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 export class MedicosController {
   constructor(private readonly medicoService: MedicosService) {}
 
+  @ApiOperation({
+    summary: 'Consultar los turnos del Médico logueado para una fecha',
+    description:
+      'Permite a un médico autenticado ver los turnos reservados a su nombre ' +
+      'en la fecha indicada (formato YYYY-MM-DD). Los turnos se devuelven ' +
+      'ordenados por horario e incluyen los datos del paciente. ' +
+      'Si no hay turnos ese día, devuelve una lista vacía.',
+  })
+  @ApiOkResponse({
+    description: 'Lista de turnos del día (puede estar vacía)',
+    type: [TurnoMedicoResponseDto],
+  })
+  @ApiBadRequestResponse({
+    description: 'La fecha no tiene el formato YYYY-MM-DD o no es válida',
+  })
+  @ApiUnauthorizedResponse({ description: 'Token ausente, inválido o expirado' })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para realizar esta operación (solo MEDICO)',
+  })
+  @ApiNotFoundResponse({
+    description: 'El usuario logueado no está registrado como médico',
+  })
   @Get('mis-turnos')
-  @ApiResponse({ type: [TurnoMedicoResponseDto] })
   turnos(@Req() req: any, @Query() query: TurnosPorFechaDto) {
     return this.medicoService.turnosDelMedico(req.user.sub, query.fecha);
   }

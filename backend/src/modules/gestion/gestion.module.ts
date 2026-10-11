@@ -6,6 +6,7 @@ import { MedicosService } from './services/medicos.service.js';
 import { ReservasService } from './services/reservas.service.js';
 import { ReservasController } from './controllers/reservas.controller.js';
 import { Usuario } from "../auth/entities/usuario.entity.js";
+import { MedicosController } from "./controllers/medicos.controller.js";
 
 
 @Module({
@@ -16,8 +17,8 @@ import { Usuario } from "../auth/entities/usuario.entity.js";
       Usuario
     ]),
   ],
-  controllers: [ReservasController],
-  providers: [MedicosService, ReservasService ],
+  controllers: [ReservasController, MedicosController],
+  providers: [MedicosService, ReservasService],
   exports: [],
 })
 export class GestionModule{}

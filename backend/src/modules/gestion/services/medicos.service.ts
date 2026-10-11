@@ -5,6 +5,7 @@ import { Medico } from '../entities/medico.entity.js';
 import { Reserva } from '../entities/reserva.entity.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 
 @Injectable()
 export class MedicosService {
@@ -66,6 +67,21 @@ export class MedicosService {
     
         reserva.estado = nuevoEstado;
         return await this.reservaRepository.save(reserva);
+    }
+
+    async actualizarValorConsulta(id: number, dto: ActualizarValorConsultaDto): Promise<Medico> {
+    
+        const medico = await this.medicoRepository.findOne({
+          where: { id },
+        });
+    
+        if (!medico) {
+          throw new NotFoundException('Médico no encontrado');
+        }
+    
+        medico.valor_consulta = dto.valor_consulta;
+    
+        return await this.medicoRepository.save(medico);
     }
 
 }

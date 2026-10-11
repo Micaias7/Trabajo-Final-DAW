@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Medico } from "./entities/medico.entity.js";
 import { Reserva } from "./entities/reserva.entity.js";
+import { MedicosController } from './controllers/medicos.controller.js';
+import { MedicosService } from './servicies/medicos.service.js';
 
 
 @Module({
@@ -11,8 +13,8 @@ import { Reserva } from "./entities/reserva.entity.js";
       Reserva,
     ]),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [MedicosController],
+  providers: [MedicosService],
   exports: [],
 })
 export class GestionModule{}

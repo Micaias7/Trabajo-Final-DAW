@@ -21,4 +21,4 @@ import { MedicosController } from "./controllers/medicos.controller.js";
   providers: [MedicosService, ReservasService],
   exports: [],
 })
-export class GestionModule{}
+export class GestionModule {}

@@ -8,6 +8,7 @@ import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 
 @ApiTags('Médicos')
 @ApiBearerAuth()
@@ -15,12 +16,14 @@ import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 @Roles(RolesUsuariosEnum.MEDICO)
 @Controller({ path: 'medicos', version: '1' })
 export class MedicosController {
-  constructor(private readonly medicoService: MedicosService) {}
+  constructor(
+    private readonly medicosService: MedicosService
+  ) {}
 
   @Get('mis-turnos')
   @ApiResponse({ type: [TurnoMedicoResponseDto] })
   turnos(@Req() req: any, @Query() query: TurnosPorFechaDto) {
-    return this.medicoService.turnosDelMedico(req.user.sub, query.fecha);
+    return this.medicosService.turnosDelMedico(req.user.sub, query.fecha);
   }
 
   @Patch('reservas/:id/estado')
@@ -31,7 +34,17 @@ export class MedicosController {
     @Param('id', ParseIntPipe) id: number,
     @Body('estado') estado: EstadosReservasEnum,
   ) {
-    return await this.medicoService.actualizarEstadoReserva(id, estado);
+    return await this.medicosService.actualizarEstadoReserva(id, estado);
+  }
+
+  @Patch(':id/valor-consulta')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+  async actualizarValorConsulta(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ActualizarValorConsultaDto,
+  ) {
+    return await this.medicosService.actualizarValorConsulta(id, dto);
   }
 
 }

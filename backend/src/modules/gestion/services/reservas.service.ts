@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Reserva } from '../entities/reserva.entity.js';
 import { CreateReservaDto } from '../dtos/input/create-reserva.dto.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 import { Usuario } from '../../auth/entities/usuario.entity.js';
 import { Medico } from '../entities/medico.entity.js';
 import { MedicosService } from './medicos.service.js';
@@ -184,4 +185,40 @@ export class ReservasService {
             return await this.crearReserva(dto.idPaciente, dto);
     }
 
+    async actualizarEstadoReserva(
+        id: number,
+        dto: ActualizarEstadoReservaDto,
+        medicoId: number, 
+    ): Promise<Reserva> {
+        
+      const reserva = await this.repository.findOne({
+            where: { 
+                id, 
+                medico: { id: medicoId } 
+            },
+            relations: {
+                medico: {
+                    usuario: true
+                },
+                usuario: true
+            },
+        });
+
+        if (!reserva) {
+            throw new NotFoundException(
+                'La reserva no existe o no pertenece al médico autenticado.',
+            );
+        }
+
+        
+        if (reserva.estado !== EstadosReservasEnum.ACTIVO) {
+            throw new BadRequestException(
+                'Solo se pueden modificar reservas que se encuentren en estado ACTIVO.',
+            );
+        }
+
+        
+        reserva.estado = dto.estado as any; 
+        return await this.repository.save(reserva);
+    }
 }

@@ -50,8 +50,9 @@ async crearReserva(idPaciente: number, dto: CreateReservaDto): Promise<{ id: num
     }
 
     const minutos = fechaTurno.getMinutes();
+    const segundos = fechaTurno.getSeconds();
 
-    if (minutos !== 0) {
+    if (minutos !== 0 || segundos !== 0) {
         throw new BadRequestException(
             'Los turnos deben comenzar en hora exacta'
         );
@@ -97,7 +98,7 @@ async crearReserva(idPaciente: number, dto: CreateReservaDto): Promise<{ id: num
     }
 
     reserva.valor_consulta = medico.valor_consulta;
-    
+
     await this.repository.save(reserva);
 
     return { id: reserva.id };

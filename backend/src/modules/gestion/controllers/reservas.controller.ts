@@ -37,24 +37,25 @@ export class ReservasController {
         const idPaciente = request.user.sub;
 
         return await this.reservasService.obtenerReservasPaciente(idPaciente);
-}
+    }
+    
     @ApiBearerAuth()
-@UseGuards(AuthGuard, RolesGuard)
-@Roles(RolesUsuariosEnum.ADMINISTRADOR)
-@Get('administrador')
-async obtenerReservasAdministrador() {
-    return await this.reservasService.obtenerReservasAdministrador();
-}
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+    @Get('administrador')
+    async obtenerReservasAdministrador() {
+        return await this.reservasService.obtenerReservasAdministrador();
+    }
 
-@ApiBearerAuth()
-@UseGuards(AuthGuard, RolesGuard)
-@Roles(RolesUsuariosEnum.ADMINISTRADOR)
-@Post('administrador')
-async crearReservaAdministrador(
-    @Body() dto: CreateReservaAdministradorDto
-) {
-    return await this.reservasService.crearReservaAdministrador(dto);
-}
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+    @Post('administrador')
+    async crearReservaAdministrador(
+        @Body() dto: CreateReservaAdministradorDto
+    ) {
+        return await this.reservasService.crearReservaAdministrador(dto);
+    }
 
 
 }

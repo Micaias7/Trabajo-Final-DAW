@@ -5,10 +5,12 @@ import { AuthGuard } from '../../auth/guards/auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 
+import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
 
+@ApiTags('Reservas')
 @Controller('reservas')
 export class ReservasController {
 
@@ -16,6 +18,28 @@ export class ReservasController {
         private readonly reservasService: ReservasService
     ) {}
 
+    @ApiOperation({
+    summary: 'Reservar un turno para el Paciente logueado',
+    description:
+        'Permite a un paciente autenticado reservar un turno médico. ' +
+        'Los turnos tienen una duración de una hora, deben comenzar ' +
+        'en hora exacta, estar dentro del horario de 08:00 a 16:00 ' +
+        'y reservarse con un máximo de 30 días de anticipación. ' +
+        'No se permiten reservas duplicadas para el mismo médico y horario.',
+    })
+    @ApiCreatedResponse({
+        description: 'Reserva creada correctamente',
+        type: CreateReservaResponseDTO,
+    })
+    @ApiBadRequestResponse({
+        description: 'Fecha, horario o disponibilidad inválidos',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Token ausente o inválido',
+    })
+    @ApiForbiddenResponse({
+        description: 'No tiene permisos para realizar esta operación',
+    })
     @ApiBearerAuth()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.PACIENTE)
@@ -38,7 +62,7 @@ export class ReservasController {
 
         return await this.reservasService.obtenerReservasPaciente(idPaciente);
     }
-    
+
     @ApiBearerAuth()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.ADMINISTRADOR)
@@ -56,6 +80,5 @@ export class ReservasController {
     ) {
         return await this.reservasService.crearReservaAdministrador(dto);
     }
-
 
 }

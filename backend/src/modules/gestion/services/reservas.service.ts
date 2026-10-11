@@ -12,6 +12,7 @@ import { ListReservaAdministradorDTO } from '../dtos/output/list-reserva-adminis
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosUsuariosEnum } from '../../auth/enums/estados-usuarios.enum.js';    
+import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
 
 @Injectable()
 export class ReservasService {
@@ -26,7 +27,7 @@ export class ReservasService {
     private readonly usuariosRepository: Repository<Usuario>
 ) {}
 
-async crearReserva(idPaciente: number, dto: CreateReservaDto): Promise<{ id: number }> {
+async crearReserva(idPaciente: number, dto: CreateReservaDto): Promise<CreateReservaResponseDTO> {
     const reserva: Reserva = this.repository.create();
     reserva.estado = EstadosReservasEnum.ACTIVO;
     reserva.usuario = { id: idPaciente } as Usuario;
@@ -101,7 +102,13 @@ async crearReserva(idPaciente: number, dto: CreateReservaDto): Promise<{ id: num
 
     await this.repository.save(reserva);
 
-    return { id: reserva.id };
+    return {
+        mensaje: 'Reserva realizada exitosamente',
+        idPaciente: idPaciente,
+        idReserva: reserva.id,
+        fechaHora: dto.fechaHora,
+        medico: `${medico.usuario.nombres} ${medico.usuario.apellidos}`
+    };
 }
 
 

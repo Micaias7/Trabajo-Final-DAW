@@ -13,7 +13,10 @@ export class MedicosService {
 
     async buscarMedicoPorId(id: number): Promise<Medico | null> {
         return await this.repository.findOne({
-            where: { id: id }
+            where: { id: id },
+            relations: {
+                usuario: true
+            }
         });
     }
 }

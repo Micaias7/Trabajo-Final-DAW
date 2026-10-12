@@ -13,7 +13,10 @@ import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-va
 import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 
-
+@ApiTags('Médicos')
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(RolesUsuariosEnum.MEDICO)
 @Controller({ path: 'medicos', version: '1' })
 export class MedicosController {
   constructor(
@@ -90,7 +93,7 @@ export class MedicosController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ActualizarEstadoReservaDto,
     @Req() request: any,
-  ) {
+  ): Promise<EstadoReservaResponseDto> {
       // Obtenemos el ID del médico logueado desde el token (usando .sub igual que en paciente)
       const medicoId = request.user.sub; 
 

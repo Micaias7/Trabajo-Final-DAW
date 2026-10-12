@@ -2,7 +2,7 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { AuthService } from "../services/auth.service.js";
 import { LoginDTO } from "../dtos/input/login.dto.js";
 
-import {ApiTags, ApiOperation, ApiResponse, ApiUnauthorizedResponse, ApiBadRequestResponse } from '@nestjs/swagger';
+import {ApiTags, ApiOperation, ApiOkResponse, ApiUnauthorizedResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 import { LoginResponseDTO } from "../dtos/output/login-response.dto.js";
 
 @ApiTags('Autenticación')
@@ -20,7 +20,7 @@ export class AuthController {
     description:
       'Autentica un usuario activo mediante sus credenciales y devuelve un token JWT.',
   })
-  @ApiResponse({
+  @ApiOkResponse({
     description: 'Inicio de sesión exitoso',
     type: LoginResponseDTO,
   })

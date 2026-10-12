@@ -10,6 +10,7 @@ import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
+import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
 
 @ApiTags('Médicos')
 @ApiBearerAuth()
@@ -66,90 +67,34 @@ export class MedicosController {
     }
   
   @ApiOperation({
-    summary: 'Actualizar el valor de la consulta de un médico',
+    summary: 'Actualizar el valor de consulta de un médico',
     description:
-      'Permite a un usuario con rol ADMINISTRADOR modificar el precio ' +
-      'actual de la consulta de un médico registrado. ' +
-      'Se debe indicar el ID del médico y el nuevo valor de la consulta. ' +
-      'El nuevo precio debe ser un número entero mayor que cero. ' +
-      'La modificación actualiza el valor del médico sin alterar ' +
-      'los importes guardados en reservas anteriores.',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Identificador único del médico cuyo valor de consulta se desea modificar.',
-    example: 1,
-    type: Number,
-    required: true,
+      'Permite al administrador modificar el valor de consulta de un médico. ' +
+      'Las reservas realizadas anteriormente conservan el valor registrado al momento de su creación.',
   })
   @ApiOkResponse({
-    description: 'Valor de la consulta médica actualizado correctamente.',
-    schema: {
-      example: {
-        id: 1,
-        matricula: 12345,
-        valor_consulta: 20000,
-      },
-    },
+    description: 'Valor de consulta actualizado correctamente',
+    type: ActualizarValorConsultaResponseDto,
   })
   @ApiBadRequestResponse({
-    description:
-      'Solicitud incorrecta. El ID del médico debe ser un número entero ' +
-      'y el valor de consulta debe ser un número entero mayor que cero.',
-    schema: {
-      example: {
-        message: [
-          'El valor no puede ser menor a 1',
-        ],
-        error: 'Bad Request',
-        statusCode: 400,
-      },
-    },
+    description: 'ID inválido o valor de consulta incorrecto',
   })
   @ApiUnauthorizedResponse({
-    description:
-      'No autorizado. Es necesario iniciar sesión y proporcionar ' +
-      'un token JWT válido para realizar esta operación.',
-    schema: {
-      example: {
-        message: 'Token no proporcionado',
-        error: 'Unauthorized',
-        statusCode: 401,
-      },
-    },
+    description: 'Token ausente, inválido o expirado',
   })
   @ApiForbiddenResponse({
-    description:
-      'Acceso prohibido. El usuario está autenticado, pero no tiene ' +
-      'el rol ADMINISTRADOR necesario para modificar el valor de la consulta.',
-    schema: {
-      example: {
-        message: 'No tiene permisos para realizar esta operación',
-        error: 'Forbidden',
-        statusCode: 403,
-      },
-    },
+    description: 'No tiene permisos para realizar esta operación',
   })
   @ApiNotFoundResponse({
-    description:
-      'Médico no encontrado. No existe un médico registrado ' +
-      'con el identificador proporcionado.',
-    schema: {
-      example: {
-        message: 'Médico no encontrado',
-        error: 'Not Found',
-        statusCode: 404,
-      },
-    },
+    description: 'Médico no encontrado',
   })
-
   @Patch(':id/valor-consulta')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RolesUsuariosEnum.ADMINISTRADOR)
   async actualizarValorConsulta(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ActualizarValorConsultaDto,
-  ) {
+  ): Promise<ActualizarValorConsultaResponseDto> {
     return await this.medicosService.actualizarValorConsulta(id, dto);
   }
 

@@ -8,6 +8,8 @@ import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth , ApiOkResponse } from '@nestjs/swagger';
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
+import { ListReservaPacienteDTO } from '../dtos/output/list-reserva-paciente.dto.js';
+import { ListReservaAdministradorDTO } from '../dtos/output/list-reserva-administrador.dto.js';
 
 
 @ApiTags('Reservas')
@@ -47,7 +49,7 @@ export class ReservasController {
     async crearReserva(
         @Req() request: any,
         @Body() dto: CreateReservaDto
-    ) {
+    ): Promise<CreateReservaResponseDTO> {
         const idPaciente = request.user.sub;
 
         return await this.reservasService.crearReserva(idPaciente, dto);
@@ -61,6 +63,7 @@ export class ReservasController {
     })
     @ApiOkResponse({
     description: 'Reservas del paciente obtenidas correctamente',
+    type: [ListReservaPacienteDTO],
     })
     @ApiUnauthorizedResponse({
     description: 'Token ausente o inválido',
@@ -72,7 +75,7 @@ export class ReservasController {
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.PACIENTE)
     @Get('mis-turnos')
-    async obtenerReservasPaciente(@Req() request: any) {
+    async obtenerReservasPaciente(@Req() request: any): Promise<ListReservaPacienteDTO[]> {
         const idPaciente = request.user.sub;
 
         return await this.reservasService.obtenerReservasPaciente(idPaciente);
@@ -86,6 +89,7 @@ export class ReservasController {
     })
     @ApiOkResponse({
     description: 'Todas las reservas obtenidas correctamente',
+    type: [ListReservaAdministradorDTO],
     })
     @ApiUnauthorizedResponse({
     description: 'Token ausente o inválido',
@@ -97,7 +101,7 @@ export class ReservasController {
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.ADMINISTRADOR)
     @Get('administrador')
-    async obtenerReservasAdministrador() {
+    async obtenerReservasAdministrador(): Promise<ListReservaAdministradorDTO[]> {
         return await this.reservasService.obtenerReservasAdministrador();
     }
 
@@ -128,7 +132,7 @@ export class ReservasController {
     @Post('administrador')
     async crearReservaAdministrador(
         @Body() dto: CreateReservaAdministradorDto
-    ) {
+    ): Promise<CreateReservaResponseDTO> {
         return await this.reservasService.crearReservaAdministrador(dto);
     }
 

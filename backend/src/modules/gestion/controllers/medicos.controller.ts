@@ -45,7 +45,7 @@ export class MedicosController {
     description: 'El usuario logueado no está registrado como médico',
   })
   @Get('mis-turnos')
-  turnos(@Req() req: any, @Query() query: TurnosPorFechaDto) {
+  turnos(@Req() req: any, @Query() query: TurnosPorFechaDto): Promise<TurnoMedicoResponseDto[]> {
     return this.medicosService.turnosDelMedico(req.user.sub, query.fecha);
   }
 

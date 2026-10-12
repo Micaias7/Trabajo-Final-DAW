@@ -95,7 +95,7 @@ export class ReservasService {
             await this.medicosService.buscarMedicoPorId(dto.idMedico);
 
         if (!medico) {
-            throw new BadRequestException('Médico no encontrado');
+            throw new NotFoundException('Médico no encontrado');
         }
 
         reserva.valor_consulta = medico.valor_consulta;
@@ -214,7 +214,7 @@ export class ReservasService {
         return { id: reserva.id };
     }
 
-    async crearReservaAdministrador(dto: CreateReservaAdministradorDto) {
+    async crearReservaAdministrador(dto: CreateReservaAdministradorDto): Promise<CreateReservaResponseDTO> {
 
         const paciente = await this.usuariosRepository.findOne({
             where: { id: dto.idPaciente }

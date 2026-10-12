@@ -8,6 +8,7 @@ import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
+import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
 
 @Injectable()
 export class MedicosService {
@@ -60,40 +61,54 @@ export class MedicosService {
         }));
     }
 
-    async actualizarEstadoReserva(id: number, dto: ActualizarEstadoReservaDto, medicoId: number): Promise<Reserva> {
-        
-      const reserva = await this.reservaRepository.findOne({
-            where: { 
-                id, 
-                medico: { id: medicoId } 
-            },
-            relations: {
-                medico: {
-                    usuario: true
-                },
-                usuario: true
-            },
-        });
-
-        if (!reserva) {
-            throw new NotFoundException(
-                'La reserva no existe o no pertenece al médico autenticado.',
-            );
-        }
-
-        
-        if (reserva.estado !== EstadosReservasEnum.ACTIVO) {
-            throw new BadRequestException(
-                'Solo se pueden modificar reservas que se encuentren en estado ACTIVO.',
-            );
-        }
-
-        
-        reserva.estado = dto.estado as any; 
-        return await this.reservaRepository.save(reserva);
+  async actualizarEstadoReserva(
+    id: number,
+    dto: ActualizarEstadoReservaDto,
+    idUsuario: number,
+  ): Promise<EstadoReservaResponseDto> {
+    const medico = await this.medicoRepository.findOne({
+      where: { usuario: { id: idUsuario } },
+    });
+    if (!medico) {
+      throw new NotFoundException('El usuario no es un médico registrado');
     }
 
-    async actualizarValorConsulta(id: number, dto: ActualizarValorConsultaDto): Promise<ActualizarValorConsultaResponseDto> {
+    const reserva = await this.reservaRepository.findOne({
+      where: { id, medico: { id: medico.id } },
+      relations: { usuario: true },
+    });
+    if (!reserva) {
+      throw new NotFoundException('La reserva no existe o no pertenece al médico autenticado');
+    }
+
+    if (reserva.estado !== EstadosReservasEnum.ACTIVO) {
+      throw new BadRequestException(
+        'Solo se pueden modificar reservas que se encuentren en estado ACTIVO',
+      );
+    }
+
+    if (Date.now() < new Date(reserva.fecha_hora).getTime()) {
+      throw new BadRequestException(
+        'No se puede marcar como atendido o ausente un turno que todavía no comenzó',
+      );
+    }
+
+    reserva.estado = dto.estado;
+    const guardada = await this.reservaRepository.save(reserva);
+
+    return {
+      id: guardada.id,
+      fecha_hora: guardada.fecha_hora,
+      estado: guardada.estado,
+      valor_consulta: guardada.valor_consulta,
+      paciente: {
+        documento: reserva.usuario.documento,
+        apellidos: reserva.usuario.apellidos,
+        nombres: reserva.usuario.nombres,
+      },
+    };
+  }  
+  async actualizarValorConsulta(id: number, dto: ActualizarValorConsultaDto): Promise<ActualizarValorConsultaResponseDto> {
     
         const medico = await this.medicoRepository.findOne({
           where: { id },

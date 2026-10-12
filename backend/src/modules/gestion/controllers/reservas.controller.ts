@@ -8,8 +8,6 @@ import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
-import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
-import { Patch, Param } from '@nestjs/common';
 
 
 @ApiTags('Reservas')
@@ -83,20 +81,4 @@ export class ReservasController {
         return await this.reservasService.crearReservaAdministrador(dto);
     }
 
-    //endpoint para actualizar el estado de una reserva a ATENDIDO o AUSENTE (solo para médicos)
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(RolesUsuariosEnum.MEDICO) 
-    @Patch(':id/estado')
-    @ApiOperation({ summary: 'Actualizar el estado de una reserva a ATENDIDO o AUSENTE (Médico)' })
-    async actualizarEstadoReserva(
-        @Param('id') id: number,
-        @Body() dto: ActualizarEstadoReservaDto,
-        @Req() request: any,
-    ) {
-        // Obtenemos el ID del médico logueado desde el token (usando .sub igual que en paciente)
-        const medicoId = request.user.sub; 
-
-        return await this.reservasService.actualizarEstadoReserva(id, dto, medicoId);
-    }
 }

@@ -1,5 +1,5 @@
 import { Controller, Get, Patch, Query, Req, UseGuards, Param, Body, ParseIntPipe } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse, ApiParam } from '@nestjs/swagger';
 import { MedicosService } from '../services/medicos.service.js';
 import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
@@ -10,6 +10,7 @@ import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
+import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
 
 @ApiTags('Médicos')
 @ApiBearerAuth()
@@ -64,14 +65,36 @@ export class MedicosController {
 
       return await this.medicosService.actualizarEstadoReserva(id, dto, medicoId);
     }
-
+  
+  @ApiOperation({
+    summary: 'Actualizar el valor de consulta de un médico',
+    description:
+      'Permite al administrador modificar el valor de consulta de un médico. ' +
+      'Las reservas realizadas anteriormente conservan el valor registrado al momento de su creación.',
+  })
+  @ApiOkResponse({
+    description: 'Valor de consulta actualizado correctamente',
+    type: ActualizarValorConsultaResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'ID inválido o valor de consulta incorrecto',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Token ausente, inválido o expirado',
+  })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para realizar esta operación',
+  })
+  @ApiNotFoundResponse({
+    description: 'Médico no encontrado',
+  })
   @Patch(':id/valor-consulta')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RolesUsuariosEnum.ADMINISTRADOR)
   async actualizarValorConsulta(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ActualizarValorConsultaDto,
-  ) {
+  ): Promise<ActualizarValorConsultaResponseDto> {
     return await this.medicosService.actualizarValorConsulta(id, dto);
   }
 

@@ -7,6 +7,7 @@ import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
+import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
 
 @Injectable()
 export class MedicosService {
@@ -92,7 +93,7 @@ export class MedicosService {
         return await this.reservaRepository.save(reserva);
     }
 
-    async actualizarValorConsulta(id: number, dto: ActualizarValorConsultaDto): Promise<Medico> {
+    async actualizarValorConsulta(id: number, dto: ActualizarValorConsultaDto): Promise<ActualizarValorConsultaResponseDto> {
     
         const medico = await this.medicoRepository.findOne({
           where: { id },
@@ -103,8 +104,14 @@ export class MedicosService {
         }
     
         medico.valor_consulta = dto.valor_consulta;
+
+        const medicoActualizado = await this.medicoRepository.save(medico);
     
-        return await this.medicoRepository.save(medico);
+        return {
+            mensaje: 'Valor de consulta actualizado correctamente',
+            idMedico: medicoActualizado.id,
+            valorConsulta: medicoActualizado.valor_consulta,
+        };
     }
 
 }

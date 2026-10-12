@@ -1,5 +1,5 @@
 import { Controller, Get, Patch, Query, Req, UseGuards, Param, Body, ParseIntPipe } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse, ApiParam } from '@nestjs/swagger';
 import { MedicosService } from '../services/medicos.service.js';
 import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
@@ -64,6 +64,84 @@ export class MedicosController {
 
       return await this.medicosService.actualizarEstadoReserva(id, dto, medicoId);
     }
+  
+  @ApiOperation({
+    summary: 'Actualizar el valor de la consulta de un médico',
+    description:
+      'Permite a un usuario con rol ADMINISTRADOR modificar el precio ' +
+      'actual de la consulta de un médico registrado. ' +
+      'Se debe indicar el ID del médico y el nuevo valor de la consulta. ' +
+      'El nuevo precio debe ser un número entero mayor que cero. ' +
+      'La modificación actualiza el valor del médico sin alterar ' +
+      'los importes guardados en reservas anteriores.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Identificador único del médico cuyo valor de consulta se desea modificar.',
+    example: 1,
+    type: Number,
+    required: true,
+  })
+  @ApiOkResponse({
+    description: 'Valor de la consulta médica actualizado correctamente.',
+    schema: {
+      example: {
+        id: 1,
+        matricula: 12345,
+        valor_consulta: 20000,
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Solicitud incorrecta. El ID del médico debe ser un número entero ' +
+      'y el valor de consulta debe ser un número entero mayor que cero.',
+    schema: {
+      example: {
+        message: [
+          'valor_consulta must not be less than 1',
+        ],
+        error: 'Bad Request',
+        statusCode: 400,
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'No autorizado. Es necesario iniciar sesión y proporcionar ' +
+      'un token JWT válido para realizar esta operación.',
+    schema: {
+      example: {
+        message: 'Token no proporcionado',
+        error: 'Unauthorized',
+        statusCode: 401,
+      },
+    },
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Acceso prohibido. El usuario está autenticado, pero no tiene ' +
+      'el rol ADMINISTRADOR necesario para modificar el valor de la consulta.',
+    schema: {
+      example: {
+        message: 'No tiene permisos para realizar esta operación',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Médico no encontrado. No existe un médico registrado ' +
+      'con el identificador proporcionado.',
+    schema: {
+      example: {
+        message: 'Médico no encontrado',
+        error: 'Not Found',
+        statusCode: 404,
+      },
+    },
+  })
 
   @Patch(':id/valor-consulta')
   @UseGuards(AuthGuard, RolesGuard)

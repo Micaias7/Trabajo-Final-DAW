@@ -99,7 +99,7 @@ export class MedicosController {
     schema: {
       example: {
         message: [
-          'valor_consulta must not be less than 1',
+          'El valor no puede ser menor a 1',
         ],
         error: 'Bad Request',
         statusCode: 400,

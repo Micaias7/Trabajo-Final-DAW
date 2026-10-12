@@ -5,7 +5,7 @@ import { AuthGuard } from '../../auth/guards/auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
-import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth , ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth , ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
 import { ListReservaPacienteDTO } from '../dtos/output/list-reserva-paciente.dto.js';
@@ -35,6 +35,9 @@ export class ReservasController {
     })
     @ApiBadRequestResponse({
         description: 'Fecha, horario o disponibilidad inválidos',
+    })
+    @ApiNotFoundResponse({
+    description: 'Médico no encontrado',
     })
     @ApiUnauthorizedResponse({
         description: 'Token ausente o inválido',
@@ -118,10 +121,13 @@ export class ReservasController {
     type: CreateReservaResponseDTO,
     })
     @ApiBadRequestResponse({
-    description: 'Paciente inválido, fecha, horario o disponibilidad incorrectos',
+    description: 'Datos inválidos, fecha, horario o disponibilidad incorrectos',
     })
     @ApiUnauthorizedResponse({
     description: 'Token ausente o inválido',
+    })
+    @ApiNotFoundResponse({
+    description: 'Paciente o médico no encontrado',
     })
     @ApiForbiddenResponse({
     description: 'No tiene permisos para realizar esta operación',

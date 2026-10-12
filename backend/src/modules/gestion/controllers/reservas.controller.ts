@@ -58,17 +58,16 @@ export class ReservasController {
     summary: 'Consultar mis reservas',
     description:
         'Permite al paciente autenticado consultar todas sus reservas de turnos médicos.',
-})
-
+    })
     @ApiOkResponse({
     description: 'Reservas del paciente obtenidas correctamente',
-})
-@ApiUnauthorizedResponse({
+    })
+    @ApiUnauthorizedResponse({
     description: 'Token ausente o inválido',
-})
-@ApiForbiddenResponse({
+    })
+    @ApiForbiddenResponse({
     description: 'No tiene permisos para realizar esta operación',
-})
+    })
     @ApiBearerAuth()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.PACIENTE)
@@ -84,17 +83,55 @@ export class ReservasController {
     summary: 'Consultar todas las reservas',
     description:
         'Permite al administrador autenticado consultar todas las reservas de turnos médicos, tanto las realizadas por los pacientes como las creadas por el administrador.',
-})
-
+    })
     @ApiOkResponse({
     description: 'Todas las reservas obtenidas correctamente',
-})
-@ApiUnauthorizedResponse({
+    })
+    @ApiUnauthorizedResponse({
     description: 'Token ausente o inválido',
-})
-@ApiForbiddenResponse({
+    })
+    @ApiForbiddenResponse({
     description: 'No tiene permisos para realizar esta operación',
-})
+    })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+    @Get('administrador')
+    async obtenerReservasAdministrador() {
+        return await this.reservasService.obtenerReservasAdministrador();
+    }
+
+    @ApiOperation({
+    summary: 'Crear una reserva para un paciente',
+    description:
+        'Permite al administrador autenticado crear una reserva de turno médico para un paciente activo. ' +
+        'Los turnos deben comenzar en hora exacta, estar dentro del horario de 08:00 a 16:00 ' +
+        'y reservarse con un máximo de 30 días de anticipación. ' +
+        'No se permiten reservas duplicadas para el mismo médico y horario.',
+    })
+    @ApiCreatedResponse({
+    description: 'Reserva creada correctamente por el administrador',
+    type: CreateReservaResponseDTO,
+    })
+    @ApiBadRequestResponse({
+    description: 'Paciente inválido, fecha, horario o disponibilidad incorrectos',
+    })
+    @ApiUnauthorizedResponse({
+    description: 'Token ausente o inválido',
+    })
+    @ApiForbiddenResponse({
+    description: 'No tiene permisos para realizar esta operación',
+    })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+    @Post('administrador')
+    async crearReservaAdministrador(
+        @Body() dto: CreateReservaAdministradorDto
+    ) {
+        return await this.reservasService.crearReservaAdministrador(dto);
+    }
+
     @ApiBearerAuth()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.PACIENTE, RolesUsuariosEnum.ADMINISTRADOR)
@@ -108,46 +145,6 @@ export class ReservasController {
             idReserva,
             request.user.rol
         );
-    }
-
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(RolesUsuariosEnum.ADMINISTRADOR)
-    @Get('administrador')
-    async obtenerReservasAdministrador() {
-        return await this.reservasService.obtenerReservasAdministrador();
-    }
-
-
-    @ApiOperation({
-    summary: 'Crear una reserva para un paciente',
-    description:
-        'Permite al administrador autenticado crear una reserva de turno médico para un paciente activo. ' +
-        'Los turnos deben comenzar en hora exacta, estar dentro del horario de 08:00 a 16:00 ' +
-        'y reservarse con un máximo de 30 días de anticipación. ' +
-        'No se permiten reservas duplicadas para el mismo médico y horario.',
-})
-    @ApiCreatedResponse({
-    description: 'Reserva creada correctamente por el administrador',
-    type: CreateReservaResponseDTO,
-})
-@ApiBadRequestResponse({
-    description: 'Paciente inválido, fecha, horario o disponibilidad incorrectos',
-})
-@ApiUnauthorizedResponse({
-    description: 'Token ausente o inválido',
-})
-@ApiForbiddenResponse({
-    description: 'No tiene permisos para realizar esta operación',
-})
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(RolesUsuariosEnum.ADMINISTRADOR)
-    @Post('administrador')
-    async crearReservaAdministrador(
-        @Body() dto: CreateReservaAdministradorDto
-    ) {
-        return await this.reservasService.crearReservaAdministrador(dto);
     }
 
 }

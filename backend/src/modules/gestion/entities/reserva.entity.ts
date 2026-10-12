@@ -14,7 +14,7 @@ export class Reserva {
   @Column({type: 'timestamp'})
   fecha_hora!: string;
 
-  @Column({ type: 'numeric' })
+  @Column({ type: 'money' })
   valor_consulta!: number;
 
   @Column({

@@ -1,4 +1,4 @@
-import { Controller , Body, Post , Get, UseGuards , Req } from '@nestjs/common';
+import { Controller , Body, Post , Get, Patch, Param, ParseIntPipe, UseGuards , Req } from '@nestjs/common';
 import { ReservasService } from '../services/reservas.service.js';
 import { CreateReservaDto } from '../dtos/input/create-reserva.dto.js';
 import { AuthGuard } from '../../auth/guards/auth.guard.js';
@@ -95,6 +95,21 @@ export class ReservasController {
 @ApiForbiddenResponse({
     description: 'No tiene permisos para realizar esta operación',
 })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(RolesUsuariosEnum.PACIENTE, RolesUsuariosEnum.ADMINISTRADOR)
+    @Patch(':id/cancelar')
+    async cancelarReserva(
+        @Req() request: any,
+        @Param('id', ParseIntPipe) idReserva: number
+    ) {
+        return await this.reservasService.cancelarReserva(
+            request.user.sub,
+            idReserva,
+            request.user.rol
+        );
+    }
+
     @ApiBearerAuth()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.ADMINISTRADOR)

@@ -1,20 +1,18 @@
 import { Controller, Get, Patch, Query, Req, UseGuards, Param, Body, ParseIntPipe } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { MedicosService } from '../services/medicos.service.js';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
 import { AuthGuard } from '../../auth/guards/auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
-import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
+import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
+import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+import { MedicosService } from '../services/medicos.service.js';
 
-@ApiTags('Médicos')
-@ApiBearerAuth()
-@UseGuards(AuthGuard, RolesGuard)
-@Roles(RolesUsuariosEnum.MEDICO)
+
 @Controller({ path: 'medicos', version: '1' })
 export class MedicosController {
   constructor(
@@ -48,22 +46,52 @@ export class MedicosController {
     return this.medicosService.turnosDelMedico(req.user.sub, query.fecha);
   }
 
-  //endpoint para actualizar el estado de una reserva a ATENDIDO o AUSENTE (solo para médicos)
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RolesUsuariosEnum.MEDICO) 
+  @Roles(RolesUsuariosEnum.MEDICO)
   @Patch(':id/estado')
-  @ApiOperation({ summary: 'Actualizar el estado de una reserva a ATENDIDO o AUSENTE (Médico)' })
+  @ApiOperation({
+    summary: 'Marcar una reserva como ATENDIDO o AUSENTE',
+    description:
+      'Permite a un médico autenticado marcar un turno propio como ATENDIDO o AUSENTE. ' +
+      'La reserva debe pertenecer al médico logueado, estar en estado ACTIVO ' +
+      'y el turno ya debe haber comenzado.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'Identificador de la reserva',
+    example: 15,
+  })
+  @ApiBody({
+    type: ActualizarEstadoReservaDto,
+    examples: {
+      atendido: { summary: 'Paciente atendido', value: { estado: EstadosReservasEnum.ATENDIDO } },
+      ausente: { summary: 'Paciente ausente', value: { estado: EstadosReservasEnum.AUSENTE } },
+    },
+  })
+  @ApiOkResponse({
+    description: 'Estado de la reserva actualizado correctamente',
+    type: EstadoReservaResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Estado distinto de ATENDIDO/AUSENTE, la reserva no está en estado ACTIVO, ' +
+      'o el turno todavía no comenzó',
+  })
+  @ApiUnauthorizedResponse({ description: 'Token ausente, inválido o expirado' })
+  @ApiForbiddenResponse({ description: 'No tiene permisos de médico para realizar esta acción' })
+  @ApiNotFoundResponse({
+    description:
+      'El usuario no es un médico registrado, o la reserva no existe o no pertenece al médico logueado',
+  })
   async actualizarEstadoReserva(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: ActualizarEstadoReservaDto,
     @Req() request: any,
   ) {
-      // Obtenemos el ID del médico logueado desde el token (usando .sub igual que en paciente)
-      const medicoId = request.user.sub; 
-
-      return await this.medicosService.actualizarEstadoReserva(id, dto, medicoId);
-    }
+    return await this.medicosService.actualizarEstadoReserva(id, dto, request.user.sub);
+  }
 
   @Patch(':id/valor-consulta')
   @UseGuards(AuthGuard, RolesGuard)

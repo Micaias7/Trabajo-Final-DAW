@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { Medico } from '../entities/medico.entity.js';
@@ -6,6 +6,7 @@ import { Reserva } from '../entities/reserva.entity.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
+import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 
 @Injectable()
 export class MedicosService {
@@ -58,14 +59,36 @@ export class MedicosService {
         }));
     }
 
-    async actualizarEstadoReserva(id: number, nuevoEstado: EstadosReservasEnum): Promise<Reserva> {
-        const reserva = await this.reservaRepository.findOne({ where: { id } });
-    
+    async actualizarEstadoReserva(id: number, dto: ActualizarEstadoReservaDto, medicoId: number): Promise<Reserva> {
+        
+      const reserva = await this.reservaRepository.findOne({
+            where: { 
+                id, 
+                medico: { id: medicoId } 
+            },
+            relations: {
+                medico: {
+                    usuario: true
+                },
+                usuario: true
+            },
+        });
+
         if (!reserva) {
-          throw new NotFoundException(`No se encontró la reserva con el ID ${id}`);
+            throw new NotFoundException(
+                'La reserva no existe o no pertenece al médico autenticado.',
+            );
         }
-    
-        reserva.estado = nuevoEstado;
+
+        
+        if (reserva.estado !== EstadosReservasEnum.ACTIVO) {
+            throw new BadRequestException(
+                'Solo se pueden modificar reservas que se encuentren en estado ACTIVO.',
+            );
+        }
+
+        
+        reserva.estado = dto.estado as any; 
         return await this.reservaRepository.save(reserva);
     }
 

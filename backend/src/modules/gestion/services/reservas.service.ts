@@ -165,6 +165,55 @@ export class ReservasService {
         return dtoList;
     }
 
+    async cancelarReserva(
+        idUsuario: number,
+        idReserva: number,
+        rol: RolesUsuariosEnum
+    ): Promise<{ id: number }> {
+        const esAdministrador = rol === RolesUsuariosEnum.ADMINISTRADOR;
+        const reserva = await this.repository.findOne({
+            where: esAdministrador
+                ? { id: idReserva }
+                : { id: idReserva, usuario: { id: idUsuario } }
+        });
+
+        if (!reserva) {
+            throw new NotFoundException('Turno no encontrado');
+        }
+
+        if (reserva.estado !== EstadosReservasEnum.ACTIVO) {
+            throw new BadRequestException('Solo se pueden cancelar turnos activos');
+        }
+
+        const fechaTurno = new Date(reserva.fecha_hora);
+
+        if (Number.isNaN(fechaTurno.getTime())) {
+            throw new BadRequestException('La fecha del turno no es válida');
+        }
+
+        if (esAdministrador) {
+            if (Date.now() >= fechaTurno.getTime()) {
+                throw new BadRequestException(
+                    'La consulta ya inicio, no se puede cancelar'
+                );
+            }
+        } else {
+            const inicioDiaTurno = new Date(fechaTurno);
+            inicioDiaTurno.setHours(0, 0, 0, 0);
+
+            if (Date.now() >= inicioDiaTurno.getTime()) {
+                throw new BadRequestException(
+                    'Solo se puede cancelar el turno 24H antes'
+                );
+            }
+        }
+
+        reserva.estado = EstadosReservasEnum.CANCELADO;
+        await this.repository.save(reserva);
+
+        return { id: reserva.id };
+    }
+
     async crearReservaAdministrador(dto: CreateReservaAdministradorDto) {
 
         const paciente = await this.usuariosRepository.findOne({

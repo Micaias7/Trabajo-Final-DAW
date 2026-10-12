@@ -1,15 +1,5 @@
 import { Controller, Get, Patch, Query, Req, UseGuards, Param, Body, ParseIntPipe } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiForbiddenResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { MedicosService } from '../services/medicos.service.js';
 import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
 import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
@@ -19,6 +9,7 @@ import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
+import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 
 @ApiTags('Médicos')
 @ApiBearerAuth()
@@ -57,16 +48,22 @@ export class MedicosController {
     return this.medicosService.turnosDelMedico(req.user.sub, query.fecha);
   }
 
-  @Patch('reservas/:id/estado')
-  @ApiOperation({ summary: 'Actualizar el estado de una reserva' })
-  @ApiResponse({ status: 200, description: 'Estado actualizado exitosamente.' })
-  @ApiResponse({ status: 404, description: 'Reserva no encontrada.' })
-  async cambiarEstadoReserva(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('estado') estado: EstadosReservasEnum,
+  //endpoint para actualizar el estado de una reserva a ATENDIDO o AUSENTE (solo para médicos)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RolesUsuariosEnum.MEDICO) 
+  @Patch(':id/estado')
+  @ApiOperation({ summary: 'Actualizar el estado de una reserva a ATENDIDO o AUSENTE (Médico)' })
+  async actualizarEstadoReserva(
+    @Param('id') id: number,
+    @Body() dto: ActualizarEstadoReservaDto,
+    @Req() request: any,
   ) {
-    return await this.medicosService.actualizarEstadoReserva(id, estado);
-  }
+      // Obtenemos el ID del médico logueado desde el token (usando .sub igual que en paciente)
+      const medicoId = request.user.sub; 
+
+      return await this.medicosService.actualizarEstadoReserva(id, dto, medicoId);
+    }
 
   @Patch(':id/valor-consulta')
   @UseGuards(AuthGuard, RolesGuard)

@@ -203,7 +203,7 @@ export class ReservasService {
 
             if (Date.now() >= inicioDiaTurno.getTime()) {
                 throw new BadRequestException(
-                    'Solo se puede cancelar el turno 24H antes'
+                    'El turno solo puede cancelarse hasta el día anterior a la consulta'
                 );
             }
         }

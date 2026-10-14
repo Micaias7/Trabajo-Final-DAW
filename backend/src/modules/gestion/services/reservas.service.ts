@@ -13,6 +13,7 @@ import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-admi
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosUsuariosEnum } from '../../auth/enums/estados-usuarios.enum.js';    
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
+import { CancelarReservaResponseDTO } from '../dtos/output/cancelar-reserva-response.dto.js';
 
 @Injectable()
 export class ReservasService {
@@ -169,7 +170,7 @@ export class ReservasService {
         idUsuario: number,
         idReserva: number,
         rol: RolesUsuariosEnum
-    ): Promise<{ id: number }> {
+    ): Promise<CancelarReservaResponseDTO> {
         const esAdministrador = rol === RolesUsuariosEnum.ADMINISTRADOR;
         const reserva = await this.repository.findOne({
             where: esAdministrador

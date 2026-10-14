@@ -5,12 +5,12 @@ import { AuthGuard } from '../../auth/guards/auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
-import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth , ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth, ApiOkResponse, ApiNotFoundResponse, ApiParam } from '@nestjs/swagger';
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
 import { ListReservaPacienteDTO } from '../dtos/output/list-reserva-paciente.dto.js';
 import { ListReservaAdministradorDTO } from '../dtos/output/list-reserva-administrador.dto.js';
-
+import { CancelarReservaResponseDTO } from '../dtos/output/cancelar-reserva-response.dto.js';
 
 @ApiTags('Reservas')
 @Controller('reservas')
@@ -142,6 +142,33 @@ export class ReservasController {
         return await this.reservasService.crearReservaAdministrador(dto);
     }
 
+    @ApiOperation({
+        summary: 'Cancelar un turno',
+        description:
+            'Permite a pacientes cancelar sus propios turnos hasta el día anterior a la consulta. ' +
+            'Los administradores pueden cancelar cualquier turno antes de que inicie la consulta.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'Identificador del turno',
+        example: 15,
+    })
+    @ApiOkResponse({
+        description: 'Turno cancelado correctamente',
+        type: CancelarReservaResponseDTO,
+    })
+    @ApiBadRequestResponse({
+        description: 'El turno no está activo o ya no se puede cancelar según el rol',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Token ausente, inválido o expirado',
+    })
+    @ApiForbiddenResponse({
+        description: 'Solo pacientes y administradores pueden cancelar turnos',
+    })
+    @ApiNotFoundResponse({
+        description: 'Turno no encontrado',
+    })
     @ApiBearerAuth()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(RolesUsuariosEnum.PACIENTE, RolesUsuariosEnum.ADMINISTRADOR)

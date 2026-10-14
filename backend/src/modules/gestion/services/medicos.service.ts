@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
+
 import { Medico } from '../entities/medico.entity.js';
 import { Reserva } from '../entities/reserva.entity.js';
-import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+
+import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
 import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
-import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
+import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
 
 @Injectable()

@@ -1,17 +1,22 @@
 import { Controller, Get, Patch, Query, Req, UseGuards, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+
 import { MedicosService } from '../services/medicos.service.js';
-import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
-import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
+
 import { AuthGuard } from '../../auth/guards/auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
+
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
-import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
-import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
-import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
-import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
 import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+
+import { TurnosPorFechaDto } from '../dtos/input/turnos-por-fecha.dto.js';
+import { TurnoMedicoResponseDto } from '../dtos/output/turno-medico-response.dto.js';
+import { ActualizarValorConsultaDto } from '../dtos/input/actualizar-valor-consulta.dto.js';
+import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-valor-consulta-response.dto.js';
+import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
+import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
+
 
 @ApiTags('Médicos')
 @ApiBearerAuth()

@@ -4,7 +4,6 @@ import { Usuario } from "../entities/usuario.entity.js";
 import { Repository } from "typeorm";
 import { EstadosUsuariosEnum } from "../enums/estados-usuarios.enum.js";
 
-
 @Injectable()
 export class UsuariosService {
 

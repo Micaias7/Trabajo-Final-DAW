@@ -1,19 +1,24 @@
 import { BadRequestException, Injectable ,  NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Reserva } from '../entities/reserva.entity.js';
-import { CreateReservaDto } from '../dtos/input/create-reserva.dto.js';
-import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
 import { Usuario } from '../../auth/entities/usuario.entity.js';
 import { Medico } from '../entities/medico.entity.js';
+
 import { MedicosService } from './medicos.service.js';
-import { ListReservaPacienteDTO } from '../dtos/output/list-reserva-paciente.dto.js';
-import { ListReservaAdministradorDTO } from '../dtos/output/list-reserva-administrador.dto.js';
-import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
+
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
 import { EstadosUsuariosEnum } from '../../auth/enums/estados-usuarios.enum.js';    
+import { EstadosReservasEnum } from '../enums/estados-reservas.enum.js';
+
+import { CreateReservaDto } from '../dtos/input/create-reserva.dto.js';
+import { ListReservaPacienteDTO } from '../dtos/output/list-reserva-paciente.dto.js';
+import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
+import { ListReservaAdministradorDTO } from '../dtos/output/list-reserva-administrador.dto.js';
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
 import { CancelarReservaResponseDTO } from '../dtos/output/cancelar-reserva-response.dto.js';
+
 
 @Injectable()
 export class ReservasService {
@@ -212,7 +217,11 @@ export class ReservasService {
         reserva.estado = EstadosReservasEnum.CANCELADO;
         await this.repository.save(reserva);
 
-        return { id: reserva.id };
+        return {
+            mensaje: 'Turno cancelado correctamente',
+            idReserva: reserva.id,
+            estado: reserva.estado,
+        };
     }
 
     async crearReservaAdministrador(dto: CreateReservaAdministradorDto): Promise<CreateReservaResponseDTO> {

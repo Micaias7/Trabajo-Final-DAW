@@ -3,8 +3,6 @@ import { EstadosReservasEnum } from "../enums/estados-reservas.enum.js";
 import { Medico } from "./medico.entity.js";
 import { Usuario } from "../../auth/entities/usuario.entity.js";
 
-
-
 @Entity('reservas')
 export class Reserva {
 

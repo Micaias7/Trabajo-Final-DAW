@@ -1,16 +1,19 @@
+import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth, ApiOkResponse, ApiNotFoundResponse, ApiParam } from '@nestjs/swagger';
 import { Controller , Body, Post , Get, Patch, Param, ParseIntPipe, UseGuards , Req } from '@nestjs/common';
 import { ReservasService } from '../services/reservas.service.js';
-import { CreateReservaDto } from '../dtos/input/create-reserva.dto.js';
+
 import { AuthGuard } from '../../auth/guards/auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { RolesUsuariosEnum } from '../../auth/enums/roles-usuarios.enum.js';
-import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth, ApiOkResponse, ApiNotFoundResponse, ApiParam } from '@nestjs/swagger';
+
+import { CreateReservaDto } from '../dtos/input/create-reserva.dto.js';
 import { CreateReservaAdministradorDto } from '../dtos/input/create-reserva-administrador.dto.js';
 import { CreateReservaResponseDTO } from '../dtos/output/create-reserva-response.dto.js';
 import { ListReservaPacienteDTO } from '../dtos/output/list-reserva-paciente.dto.js';
 import { ListReservaAdministradorDTO } from '../dtos/output/list-reserva-administrador.dto.js';
 import { CancelarReservaResponseDTO } from '../dtos/output/cancelar-reserva-response.dto.js';
+
 
 @ApiTags('Reservas')
 @Controller('reservas')
@@ -176,7 +179,7 @@ export class ReservasController {
     async cancelarReserva(
         @Req() request: any,
         @Param('id', ParseIntPipe) idReserva: number
-    ) {
+    ): Promise<CancelarReservaResponseDTO> {
         return await this.reservasService.cancelarReserva(
             request.user.sub,
             idReserva,

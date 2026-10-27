@@ -1,1 +1,55 @@
-<p>inicio works!</p>
+<h1>{{ titulo }}</h1>
+
+<button
+  [disabled]="botonDeshabilitado"
+  (click)="solicitarTurno()">
+  Solicitar turno
+</button>
+
+@if (botonDeshabilitado) {
+  <p>La solicitud de turno fue iniciada correctamente.</p>
+} @else {
+  <p>Todavía no has iniciado una solicitud de turno.</p>
+}
+
+<h2>Especialidades disponibles</h2>
+
+<ul>
+  @for (especialidad of especialidades; track especialidad) {
+    <li>{{ especialidad }}</li>
+  }
+</ul>
+
+<h2>Mis turnos</h2>
+
+<ul>
+  @for (turno of turnos; track turno.id) {
+    <li>
+      <p>Médico: {{ turno.medico }}</p>
+      <p>Fecha: {{ turno.fecha }}</p>
+
+      @if (turno.estado === 'ACTIVO') {
+        <p>Turno confirmado</p>
+      } @else {
+        <p>Turno cancelado</p>
+      }
+      @if (turno.observacion) {
+        <p>Observación: {{ turno.observacion }}</p>
+      }
+    </li>
+    <button (click)="verTurno(turno.id)">
+      Ver turno
+    </button>
+  }
+</ul>
+
+@if (turnoSeleccionado) {
+  <h2>Detalle del turno seleccionado</h2>
+
+  <p>Médico: {{ turnoSeleccionado.medico }}</p>
+  <p>Fecha: {{ turnoSeleccionado.fecha }}</p>
+  <p>Estado: {{ turnoSeleccionado.estado }}</p>
+  <button (click)="cerrarDetalle()">
+    Cerrar detalle
+  </button>
+}

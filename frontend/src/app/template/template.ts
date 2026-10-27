@@ -4,16 +4,14 @@ import { Button } from 'primeng/button';
 
 @Component({
   selector: 'app-template',
-  imports: [Button],
   templateUrl: './template.html',
-  styleUrl: './template.css'
+  styleUrl: './template.css',
+  imports: [Button],
 })
 export class Template {
-
-  private readonly authStore = inject(AuthStore);
+  private readonly authStore: AuthStore = inject(AuthStore);
 
   cerrarSesion() {
     this.authStore.cerrarSesion();
   }
-
 }

@@ -1,0 +1,8 @@
+<form [formGroup]="form">
+    <div id="main">
+        <h2 id="header">Sistema de gestión de turnos </h2>
+        <input pInputText id="email" type="text" placeholder="Email de usuario" formControlName="email" />
+        <p-password id="clave" formControlName="clave" [feedback]="false" autocomplete="off" placeholder="Clave de acceso"/>
+        <p-button label="Iniciar sesión" (click)="iniciarSesion()"/>
+    </div>
+</form>

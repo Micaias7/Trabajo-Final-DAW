@@ -58,3 +58,54 @@
     padding: 10px;
   }
 }
+
+/* Formulario para modificar precios */
+.editor-precio {
+  background-color: white;
+  padding: 25px;
+  margin-top: 25px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.editor-precio h2 {
+  margin-top: 0;
+}
+
+.editor-precio label {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.editor-precio input {
+  width: 100%;
+  max-width: 250px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Botones */
+.gestion-medicos button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px 8px 0 0;
+}
+
+.gestion-medicos button:hover {
+  background-color: #1d4ed8;
+}
+
+.gestion-medicos button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

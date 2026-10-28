@@ -1,0 +1,25 @@
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.selector-fecha {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nota {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}

@@ -1,10 +1,18 @@
 <h2>Gestión de reservas</h2>
-<button type="button" routerLink="/administrador">
-  Volver al panel principal
-</button>
 
-<table>
-  <thead>
+<p-button
+  label="Volver al panel principal"
+  icon="pi pi-arrow-left"
+  routerLink="/administrador"
+/>
+
+<p-table
+  [value]="reservas()"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [scrollable]="true"
+  scrollHeight="70vh"
+>
+  <ng-template #header>
     <tr>
       <th>ID</th>
       <th>Fecha y hora</th>
@@ -14,27 +22,31 @@
       <th>Valor consulta</th>
       <th>Acciones</th>
     </tr>
-  </thead>
+  </ng-template>
 
-  <tbody>
-    @for (reserva of reservas(); track reserva.id) {
-      <tr>
-        <td>{{ reserva.id }}</td>
-        <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ reserva.medico }}</td>
-        <td>{{ reserva.paciente }}</td>
-        <td>{{ reserva.estado }}</td>
-        <td>{{ reserva.valorConsulta }}</td>
-        <td>
-          @if (reserva.estado === 'ACTIVO') {
-            <button type="button">Cancelar</button>
-          }
-        </td>
-      </tr>
-    } @empty {
-      <tr>
-        <td colspan="7">No hay reservas registradas.</td>
-      </tr>
-    }
-  </tbody>
-</table>
+  <ng-template #body let-reserva>
+    <tr>
+      <td>{{ reserva.id }}</td>
+      <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ reserva.medico }}</td>
+      <td>{{ reserva.paciente }}</td>
+      <td>{{ reserva.estado }}</td>
+      <td>{{ reserva.valorConsulta }}</td>
+      <td>
+        @if (reserva.estado === 'ACTIVO') {
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="danger"
+          />
+        }
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="7">No hay reservas registradas.</td>
+    </tr>
+  </ng-template>
+</p-table>

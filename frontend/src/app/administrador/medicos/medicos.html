@@ -1,1 +1,45 @@
-<p>medicos works!</p>
+
+<section class="gestion-medicos">
+  <h1>Gestión de médicos</h1>
+
+  <p>
+    Consultá los médicos registrados y modificá
+    el valor de sus consultas.
+  </p>
+
+  <h2>Listado de médicos</h2>
+
+  @if (cargando()) {
+    <p>Cargando médicos...</p>
+  } @else if (error()) {
+    <p role="alert">{{ error() }}</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Médico</th>
+          <th>Matrícula</th>
+          <th>Valor de consulta</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (medico of medicos(); track medico.id) {
+          <tr>
+            <td>
+              {{ medico.nombres }} {{ medico.apellidos }}
+            </td>
+            <td>{{ medico.matricula }}</td>
+            <td>$ {{ medico.valor_consulta }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">
+              No hay médicos registrados.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

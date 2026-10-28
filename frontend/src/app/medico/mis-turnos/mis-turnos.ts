@@ -16,7 +16,17 @@ type SeveridadTag = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
 
 @Component({
   selector: 'app-mis-turnos-medico',
-  imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, TableModule, ButtonModule, DatePicker, Tag, Template],
+  imports: [
+    DatePipe,
+    DecimalPipe,
+    FormsModule,
+    RouterLink,
+    TableModule,
+    ButtonModule,
+    DatePicker,
+    Tag,
+    Template,
+  ],
   templateUrl: './mis-turnos.html',
   styleUrl: './mis-turnos.css',
 })
@@ -37,7 +47,7 @@ export class MisTurnos implements OnInit {
     this.cargarTurnos();
   }
 
-   cargarTurnos(): void {
+  cargarTurnos(): void {
     const fecha = this.fecha();
     if (!fecha) {
       this.turnos.set([]);
@@ -47,7 +57,6 @@ export class MisTurnos implements OnInit {
     this.cargando.set(true);
     this.medicoApi.obtenerTurnos(this.formatearFecha(fecha)).subscribe({
       next: (turnos) => {
-      
         this.turnos.set(
           turnos.map((t) => ({ ...t, valor_consulta: this.aNumero(t.valor_consulta) })),
         );
@@ -97,7 +106,6 @@ export class MisTurnos implements OnInit {
     }
   }
 
-    
   private aNumero(valor: number | string): number {
     if (typeof valor === 'number') return valor;
 
@@ -117,7 +125,6 @@ export class MisTurnos implements OnInit {
     return Number.isNaN(numero) ? 0 : numero;
   }
 
- 
   private formatearFecha(fecha: Date): string {
     const anio = fecha.getFullYear();
     const mes = String(fecha.getMonth() + 1).padStart(2, '0');

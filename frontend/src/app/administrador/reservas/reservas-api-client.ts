@@ -9,7 +9,7 @@ import { ReservaAdministrador } from './reserva-admin-dto';
 export class ReservasApiClient {
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = 'api/v1/reservas';
+  private readonly apiUrl = '/api/v1/reservas';
 
   obtenerReservasAdministrador(): Observable<ReservaAdministrador[]> {
     return this.http.get<ReservaAdministrador[]>(

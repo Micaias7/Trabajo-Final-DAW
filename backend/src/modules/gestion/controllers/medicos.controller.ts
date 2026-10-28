@@ -17,6 +17,8 @@ import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-va
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
 
+import { MedicoListadoDto } from '../dtos/output/medico-listado.dto.js';
+
 
 @ApiTags('Médicos')
 @ApiBearerAuth()
@@ -27,6 +29,30 @@ export class MedicosController {
   constructor(
     private readonly medicosService: MedicosService
   ) {}
+  
+  @ApiOperation({
+    summary: 'Consultar el listado de médicos',
+    description:
+      'Permite a un usuario con rol ADMINISTRADOR consultar ' +
+      'los médicos registrados en el sistema. ' +
+      'Devuelve el identificador, matrícula, nombres, apellidos ' +
+      'y valor actual de la consulta de cada médico.',
+  })
+  @ApiOkResponse({
+    description: 'Listado de médicos obtenido correctamente',
+    type: [MedicoListadoDto],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Token ausente, inválido o expirado',
+  })
+  @ApiForbiddenResponse({
+    description: 'Acceso permitido solo a ADMINISTRADOR',
+  })
+  @Get()
+  @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+  async listarMedicos(): Promise<MedicoListadoDto[]> {
+    return await this.medicosService.listarMedicos();
+  }
 
   @ApiOperation({
     summary: 'Consultar los turnos del Médico logueado para una fecha',

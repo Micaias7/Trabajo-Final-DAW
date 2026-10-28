@@ -6,6 +6,7 @@ import { Inicio as InicioAdministrador } from './administrador/inicio/inicio';
 import { rolGuard } from './auth/rol-guard';
 
 import { Reservas } from './administrador/reservas/reservas';
+import { Medicos } from './administrador/medicos/medicos';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -30,6 +31,12 @@ export const routes: Routes = [
   {
     path: 'administrador/reservas',
     component: Reservas,
+    canActivate: [rolGuard],
+    data: { rol: 'ADMINISTRADOR' },
+  },
+  {
+    path: 'administrador/medicos',
+    component: Medicos,
     canActivate: [rolGuard],
     data: { rol: 'ADMINISTRADOR' },
   },

@@ -12,6 +12,9 @@ import { ActualizarValorConsultaResponseDto } from '../dtos/output/actualizar-va
 import { ActualizarEstadoReservaDto } from '../dtos/input/actualizar-estado-reserva.dto.js';
 import { EstadoReservaResponseDto } from '../dtos/output/estado-reserva-response.dto.js';
 
+import { MedicoListadoDto } from '../dtos/output/medico-listado.dto.js';
+
+
 @Injectable()
 export class MedicosService {
 
@@ -130,5 +133,24 @@ export class MedicosService {
             valorConsulta: medicoActualizado.valor_consulta,
         };
     }
+  
+  async listarMedicos(): Promise<MedicoListadoDto[]> {
+    const medicos = await this.medicoRepository.find({
+      relations: {
+        usuario: true,
+      },
+      order: {
+        id: 'ASC',
+      },
+    });
+
+    return medicos.map((medico) => ({
+      id: medico.id,
+      matricula: medico.matricula,
+      nombres: medico.usuario.nombres,
+      apellidos: medico.usuario.apellidos,
+      valor_consulta: medico.valor_consulta,
+    }));
+  }
 
 }

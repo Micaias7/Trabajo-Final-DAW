@@ -15,6 +15,11 @@ export class Medicos implements OnInit {
   medicos = signal<MedicoListadoDto[]>([]);
   cargando = signal(false);
   error = signal('');
+  medicoSeleccionado = signal<MedicoListadoDto | null>(null);
+  nuevoValor = signal<string>('');
+  errorPrecio = signal('');
+  guardando = signal(false);
+  mensajeExito = signal('');
 
   ngOnInit(): void {
     this.cargarMedicos();
@@ -35,5 +40,79 @@ export class Medicos implements OnInit {
       },
     });
   }
+  
+  seleccionarMedico(medico: MedicoListadoDto): void {
+    this.medicoSeleccionado.set(medico);
+    this.nuevoValor.set(String(medico.valor_consulta));
+    this.errorPrecio.set('');
+    this.mensajeExito.set('');
+  }
+  
+  cancelarEdicion(): void {
+    this.medicoSeleccionado.set(null);
+    this.nuevoValor.set('');
+  }
+  
+  validarPrecio(): boolean {
+    const medico = this.medicoSeleccionado();
+    const valorIngresado = this.nuevoValor().trim();
+    const precio = Number(valorIngresado);
+
+    this.errorPrecio.set('');
+
+    if (!medico) {
+      this.errorPrecio.set('Debés seleccionar un médico.');
+      return false;
+    }
+
+    if (
+      valorIngresado === '' ||
+      !Number.isSafeInteger(precio) ||
+      precio <= 0
+    ) {
+      this.errorPrecio.set(
+        'El precio debe ser un número entero mayor que cero.'
+      );
+      return false;
+    }
+
+    if (precio === medico.valor_consulta) {
+      this.errorPrecio.set(
+        'El nuevo precio debe ser diferente al actual.'
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  guardarPrecio(): void {
+    if (this.guardando() || !this.validarPrecio()) {
+      return;
+    }
+
+    const medico = this.medicoSeleccionado();
+    if (!medico) return;
+
+    this.guardando.set(true);
+    this.mensajeExito.set('');
+
+    this.medicosApi.actualizarValorConsulta(
+      medico.id,
+      Number(this.nuevoValor())
+    ).subscribe({
+      next: () => {
+        this.guardando.set(false);
+        this.cancelarEdicion();
+        this.cargarMedicos();
+        this.mensajeExito.set('Precio actualizado correctamente.');
+      },
+      error: () => {
+        this.guardando.set(false);
+        this.errorPrecio.set('No se pudo actualizar el precio.');
+      },
+    });
+  }
+
 }
 

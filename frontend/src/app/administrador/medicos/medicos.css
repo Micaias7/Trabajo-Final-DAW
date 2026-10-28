@@ -1,0 +1,60 @@
+
+.gestion-medicos {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.gestion-medicos h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.gestion-medicos > p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.gestion-medicos h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+/* Tabla de médicos */
+.gestion-medicos table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.gestion-medicos th,
+.gestion-medicos td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.gestion-medicos th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+.gestion-medicos tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 768px) {
+  .gestion-medicos {
+    padding: 15px;
+  }
+
+  .gestion-medicos th,
+  .gestion-medicos td {
+    padding: 10px;
+  }
+}

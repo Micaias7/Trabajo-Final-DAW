@@ -12,7 +12,25 @@ export class MedicosApiClient {
 
   private readonly apiUrl = '/api/v1/medicos';
 
-  obtenerMedicos(): Observable<MedicoListadoDto[]> {
-    return this.http.get<MedicoListadoDto[]>(this.apiUrl);
-  }
+    obtenerMedicos(): Observable<MedicoListadoDto[]> {
+        return this.http.get<MedicoListadoDto[]>(this.apiUrl);
+    }
+  
+    actualizarValorConsulta(
+        id: number,
+        valorConsulta: number
+    ): Observable<{
+        mensaje: string;
+        idMedico: number;
+        valorConsulta: number;
+    }> {
+      return this.http.patch<{
+        mensaje: string;
+        idMedico: number;
+        valorConsulta: number;
+    }>(
+        `${this.apiUrl}/${id}/valor-consulta`,
+        { valor_consulta: valorConsulta }
+    );
+    }
 }

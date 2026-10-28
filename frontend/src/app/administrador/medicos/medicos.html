@@ -1,6 +1,10 @@
 
 <section class="gestion-medicos">
   <h1>Gestión de médicos</h1>
+  
+    @if (mensajeExito()) {
+    <p role="status">{{ mensajeExito() }}</p>
+    }
 
   <p>
     Consultá los médicos registrados y modificá
@@ -20,6 +24,7 @@
           <th>Médico</th>
           <th>Matrícula</th>
           <th>Valor de consulta</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
@@ -31,10 +36,17 @@
             </td>
             <td>{{ medico.matricula }}</td>
             <td>$ {{ medico.valor_consulta }}</td>
+            <td>
+                <button
+                    type="button"
+                    (click)="seleccionarMedico(medico)">
+                    Modificar precio
+                </button>
+            </td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="3">
+            <td colspan="4">
               No hay médicos registrados.
             </td>
           </tr>
@@ -42,4 +54,52 @@
       </tbody>
     </table>
   }
+  
+    @if (medicoSeleccionado(); as medico) {
+    <div class="editor-precio">
+        <h2>Modificar precio de consulta</h2>
+
+        <p>
+        <strong>Médico:</strong>
+        {{ medico.nombres }} {{ medico.apellidos }}
+        </p>
+
+        <p>
+        <strong>Matrícula:</strong>
+        {{ medico.matricula }}
+        </p>
+
+        <p>
+        <strong>Valor actual:</strong>
+        $ {{ medico.valor_consulta }}
+        </p>
+
+        <label for="nuevo-precio">
+        Nuevo valor de la consulta:
+        </label>
+
+        <input
+            id="nuevo-precio"
+            type="number"
+            min="1"
+            step="1"
+            [value]="nuevoValor()"
+            #precioInput
+            (input)="nuevoValor.set(precioInput.value)"
+        />
+        
+        @if (errorPrecio()) {
+        <p role="alert">{{ errorPrecio() }}</p>
+        }
+
+        <button type="button" (click)="guardarPrecio()" [disabled]="guardando()"> 
+            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+
+        <button type="button" (click)="cancelarEdicion()">
+            Cancelar
+        </button>
+    </div>
+    }
+
 </section>

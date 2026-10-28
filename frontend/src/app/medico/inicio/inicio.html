@@ -1,16 +1,18 @@
-<section class="panel-medico">
-  <h1>Panel del médico</h1>
-  <p>Consultá tus turnos y registrá la asistencia de tus pacientes.</p>
+<app-template>
+  <section class="panel-medico">
+    <h1>Panel del médico</h1>
+    <p>Consultá tus turnos y registrá la asistencia de tus pacientes.</p>
 
-  <div class="opciones">
-    <div class="tarjeta">
-      <h2>📋 Mis turnos</h2>
+    <div class="opciones">
+      <div class="tarjeta">
+        <h2>📋 Mis turnos</h2>
 
-      <p>
-        Consultá tus turnos por fecha y registrá si cada paciente fue atendido o estuvo ausente.
-      </p>
+        <p>
+          Consultá tus turnos por fecha y registrá si cada paciente fue atendido o estuvo ausente.
+        </p>
 
-      <button type="button">Ver mis turnos</button>
+        <button type="button" routerLink="/medico/mis-turnos">Ver mis turnos</button>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+</app-template>

@@ -1,0 +1,73 @@
+<app-template>
+  <h2>Mis turnos</h2>
+
+  <div class="barra">
+    <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/medico" />
+
+    <div class="selector-fecha">
+      <label for="fecha-turnos">Fecha</label>
+      <p-datepicker
+        inputId="fecha-turnos"
+        [ngModel]="fecha()"
+        (ngModelChange)="cambiarFecha($event)"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+      />
+    </div>
+  </div>
+
+  <p-table
+    [value]="turnos()"
+    [loading]="cargando()"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [scrollable]="true"
+    scrollHeight="60vh"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Hora</th>
+        <th>Paciente</th>
+        <th>Documento</th>
+        <th>Valor consulta</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-turno>
+      <tr>
+        <td>{{ turno.fecha_hora | date: 'HH:mm' }}</td>
+        <td>{{ turno.paciente.apellidos }}, {{ turno.paciente.nombres }}</td>
+        <td>{{ turno.paciente.documento }}</td>
+        <td>$ {{ turno.valor_consulta | number: '1.0-0' : 'es-AR' }}</td>
+        <td><p-tag [value]="turno.estado" [severity]="severidad(turno.estado)" /></td>
+        <td class="acciones">
+          <p-button
+            label="Atendido"
+            icon="pi pi-check"
+            severity="success"
+            [disabled]="!puedeMarcar(turno)"
+            (onClick)="marcar(turno, 'ATENDIDO')"
+          />
+          <p-button
+            label="Ausente"
+            icon="pi pi-user-minus"
+            severity="warn"
+            [disabled]="!puedeMarcar(turno)"
+            (onClick)="marcar(turno, 'AUSENTE')"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="6">No tenés turnos reservados para esta fecha.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p class="nota">
+    Solo se pueden marcar los turnos en estado ACTIVO cuyo horario ya comenzó.
+  </p>
+</app-template>

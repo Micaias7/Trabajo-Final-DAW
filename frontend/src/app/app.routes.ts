@@ -4,11 +4,18 @@ import { Inicio } from './paciente/inicio/inicio';
 import { Inicio as InicioMedico } from './medico/inicio/inicio';
 import { Inicio as InicioAdministrador } from './administrador/inicio/inicio';
 import { rolGuard } from './auth/rol-guard';
+import { MisTurnos } from './medico/mis-turnos/mis-turnos';
 
 import { Reservas } from './administrador/reservas/reservas';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
+    {
+    path: 'medico/mis-turnos',
+    component: MisTurnos,
+    canActivate: [rolGuard],
+    data: { rol: 'MEDICO' },
+  },
   {
     path: 'paciente',
     component: Inicio,

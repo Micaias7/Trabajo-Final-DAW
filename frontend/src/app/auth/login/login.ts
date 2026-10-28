@@ -46,7 +46,6 @@ export class Login {
       next: (res) => {
         this.authStore.guardarToken(res.accessToken);
         const datos = jwtDecode<{ rol: string }>(res.accessToken);
-        console.log('Rol del usuario:', datos.rol);
         if (datos.rol === 'ADMINISTRADOR') {
           this.router.navigateByUrl('/administrador');
         } else if (datos.rol === 'MEDICO') {

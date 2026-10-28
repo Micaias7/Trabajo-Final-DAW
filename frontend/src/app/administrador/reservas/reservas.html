@@ -1,0 +1,40 @@
+<h2>Gestión de reservas</h2>
+<button type="button" routerLink="/administrador">
+  Volver al panel principal
+</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Fecha y hora</th>
+      <th>Médico</th>
+      <th>Paciente</th>
+      <th>Estado</th>
+      <th>Valor consulta</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (reserva of reservas(); track reserva.id) {
+      <tr>
+        <td>{{ reserva.id }}</td>
+        <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ reserva.medico }}</td>
+        <td>{{ reserva.paciente }}</td>
+        <td>{{ reserva.estado }}</td>
+        <td>{{ reserva.valorConsulta }}</td>
+        <td>
+          @if (reserva.estado === 'ACTIVO') {
+            <button type="button">Cancelar</button>
+          }
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="7">No hay reservas registradas.</td>
+      </tr>
+    }
+  </tbody>
+</table>

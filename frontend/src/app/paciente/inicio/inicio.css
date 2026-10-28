@@ -1,0 +1,74 @@
+.panel-paciente {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.panel-paciente h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.panel-paciente > p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Contenedor de tarjetas */
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Tarjetas */
+.tarjeta {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.tarjeta h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.tarjeta p {
+  color: #666;
+  flex-grow: 1;
+}
+
+/* Botones */
+.tarjeta button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.tarjeta button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 768px) {
+  .opciones {
+    grid-template-columns: 1fr;
+  }
+}

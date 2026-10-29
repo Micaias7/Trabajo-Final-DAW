@@ -24,6 +24,15 @@ export const routes: Routes = [
     data: { rol: 'PACIENTE' },
   },
   {
+    path: 'paciente/turnos',
+    loadComponent: () =>
+      import('./paciente/reservas/reservas').then(
+        (modulo) => modulo.ReservasPaciente
+      ),
+    canActivate: [rolGuard],
+    data: { rol: 'PACIENTE' },
+  },
+  {
     path: 'medico',
     component: InicioMedico,
     canActivate: [rolGuard],

@@ -1,0 +1,66 @@
+.reservas-paciente {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  color: #1f2937;
+  background-color: #fff;
+}
+
+th,
+td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  color: #1f2937;
+  background-color: #e5e7eb;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #fff;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f3f4f6;
+}
+
+tbody tr:hover {
+  background-color: #e5e7eb;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #dc2626;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .reservas-paciente {
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 700px;
+  }
+}

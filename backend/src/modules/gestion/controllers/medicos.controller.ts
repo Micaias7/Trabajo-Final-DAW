@@ -49,7 +49,8 @@ export class MedicosController {
     description: 'Acceso permitido solo a ADMINISTRADOR',
   })
   @Get()
-  @Roles(RolesUsuariosEnum.ADMINISTRADOR)
+  @Roles  (RolesUsuariosEnum.ADMINISTRADOR,
+  RolesUsuariosEnum.PACIENTE)
   async listarMedicos(): Promise<MedicoListadoDto[]> {
     return await this.medicosService.listarMedicos();
   }

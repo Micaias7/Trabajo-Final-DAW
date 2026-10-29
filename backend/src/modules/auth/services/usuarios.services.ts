@@ -4,6 +4,7 @@ import { Usuario } from "../entities/usuario.entity.js";
 import { Repository } from "typeorm";
 import { EstadosUsuariosEnum } from "../enums/estados-usuarios.enum.js";
 
+
 @Injectable()
 export class UsuariosService {
 
@@ -12,14 +13,13 @@ export class UsuariosService {
     private readonly repository: Repository<Usuario>,
   ) {}
 
-  async buscarUsuarioActivoPorMail( email: string ): Promise<Usuario | null> {
-    
+  async buscarUsuarioActivoPorMail(email: string): Promise<Usuario | null> {
     return await this.repository.findOne({
       where: {
         email,
         estado: EstadosUsuariosEnum.ACTIVO,
       }
-    })
+    });
   }
 
 }

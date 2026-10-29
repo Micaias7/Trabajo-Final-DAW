@@ -10,6 +10,12 @@ export class ListReservaAdministradorDTO {
     id!: number;
 
     @ApiProperty({
+    description: 'Identificador del médico',
+    example: 1,
+})
+idMedico!: number;
+
+    @ApiProperty({
         description: 'Fecha y hora del turno',
         example: '2026-10-21T11:00:00',
     })

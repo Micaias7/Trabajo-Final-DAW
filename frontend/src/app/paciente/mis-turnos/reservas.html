@@ -1,0 +1,55 @@
+<app-template>
+  <section class="reservas-paciente">
+    <h1>Mis turnos</h1>
+    <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/paciente" />
+
+    @if (cargando()) {
+      <p>Cargando turnos...</p>
+    } @else if (error()) {
+      <p role="alert">{{ error() }}</p>
+      <button type="button" (click)="cargarReservas()">Reintentar</button>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha y hora</th>
+            <th>Médico</th>
+            <th>Estado</th>
+            <th>Valor consulta</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (reserva of reservas(); track reserva.id) {
+            <tr>
+              <td>{{ reserva.id }}</td>
+              <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ reserva.medico }}</td>
+              <td>{{ reserva.estado }}</td>
+              <td>{{ reserva.valorConsulta }}</td>
+              <td>
+                @if (puedeCancelar(reserva)) {
+                  <button
+                    type="button"
+                    (click)="cancelarReserva(reserva)"
+                    [disabled]="cancelandoId() !== null"
+                  >
+                    {{ cancelandoId() === reserva.id ? 'Cancelando...' : 'Cancelar turno' }}
+                  </button>
+                } @else {
+                  <span>—</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6">No tenés turnos registrados.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</app-template>

@@ -4,12 +4,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { ReservasApiClient } from '../../reservas/reservas-api-client';
-import { ReservaPaciente } from './reserva-paciente-dto';
+import { ReservasApiClient } from '../../compartido/reservas-api-client';
+import { ReservaPacienteDto } from './reserva-paciente-dto';
+import { Template } from '../../template/template';
 
 @Component({
   selector: 'app-reservas-paciente',
-  imports: [DatePipe, RouterLink, ButtonModule],
+  imports: [DatePipe, RouterLink, ButtonModule, Template],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
 })
@@ -17,7 +18,7 @@ export class ReservasPaciente implements OnInit {
   private readonly reservasApi = inject(ReservasApiClient);
   private readonly messageService = inject(MessageService);
 
-  reservas = signal<ReservaPaciente[]>([]);
+  reservas = signal<ReservaPacienteDto[]>([]);
   cargando = signal(false);
   error = signal('');
   cancelandoId = signal<number | null>(null);
@@ -42,7 +43,7 @@ export class ReservasPaciente implements OnInit {
     });
   }
 
-  puedeCancelar(reserva: ReservaPaciente): boolean {
+  puedeCancelar(reserva: ReservaPacienteDto): boolean {
     if (reserva.estado !== 'ACTIVO') {
       return false;
     }
@@ -58,7 +59,7 @@ export class ReservasPaciente implements OnInit {
     return Date.now() < inicioDiaTurno.getTime();
   }
 
-  cancelarReserva(reserva: ReservaPaciente): void {
+  cancelarReserva(reserva: ReservaPacienteDto): void {
     if (this.cancelandoId() !== null || !this.puedeCancelar(reserva)) {
       return;
     }

@@ -34,7 +34,7 @@
           <tr>
             <td>{{ medico.nombres }} {{ medico.apellidos }}</td>
             <td>{{ medico.matricula }}</td>
-            <td>$ {{ medico.valor_consulta }}</td>
+            <td>{{ medico.valor_consulta | currency:'ARS':'symbol':'1.0-0':'es-AR' }}</td>
             <td>
               <p-button
                 label="Modificar precio"
@@ -69,17 +69,20 @@
 
         <p>
           <strong>Valor actual:</strong>
-          $ {{ medico.valor_consulta }}
+          {{ medico.valor_consulta | currency:'ARS':'symbol':'1.0-0':'es-AR' }}
         </p>
 
         <label for="nuevo-precio"> Nuevo valor de la consulta: </label>
 
         <p-inputnumber
           inputId="nuevo-precio"
+          mode="currency"
+          currency="ARS"
+          locale="es-AR"
           [min]="1"
           [minFractionDigits]="0"
           [maxFractionDigits]="0"
-          [useGrouping]="false"
+          [useGrouping]="true"
           [ngModel]="nuevoValor() === '' ? null : +nuevoValor()"
           (ngModelChange)="nuevoValor.set($event === null ? '' : $event.toString())"
         />

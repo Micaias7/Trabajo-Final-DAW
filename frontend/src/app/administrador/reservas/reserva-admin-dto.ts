@@ -4,5 +4,5 @@ export interface ReservaAdministrador {
   estado: string;
   medico: string;
   paciente: string;
-  valorConsulta: string;
+  valorConsulta: number;
 }

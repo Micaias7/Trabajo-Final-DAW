@@ -1,12 +1,12 @@
 <app-template>
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/administrador"
+  ></p-button>
+
   <section class="gestion-medicos">
     <h1>Gestión de médicos</h1>
-
-    <p-button
-      label="Volver al panel principal"
-      icon="pi pi-arrow-left"
-      routerLink="/administrador"
-    />
 
     <p>Consultá los médicos registrados y modificá el valor de sus consultas.</p>
 
@@ -40,7 +40,7 @@
                 label="Modificar precio"
                 icon="pi pi-pencil"
                 (onClick)="seleccionarMedico(medico)"
-              />
+              ></p-button>
             </td>
           </tr>
         </ng-template>
@@ -72,7 +72,7 @@
           {{ medico.valor_consulta | currency: 'ARS' : 'symbol' : '1.0-0' : 'es-AR' }}
         </p>
 
-        <label for="nuevo-precio"> Nuevo valor de la consulta: </label>
+        <label for="nuevo-precio">Nuevo valor de la consulta:</label>
 
         <p-inputnumber
           inputId="nuevo-precio"
@@ -97,7 +97,7 @@
           [loading]="guardando()"
           [disabled]="guardando()"
           (onClick)="guardarPrecio()"
-        />
+        ></p-button>
 
         <p-button
           label="Cancelar"
@@ -106,7 +106,7 @@
           [outlined]="true"
           [disabled]="guardando()"
           (onClick)="cancelarEdicion()"
-        />
+        ></p-button>
       </div>
     }
   </section>

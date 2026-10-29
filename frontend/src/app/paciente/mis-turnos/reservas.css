@@ -1,66 +1,48 @@
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
 .reservas-paciente {
-  padding: 30px;
-  max-width: 1200px;
+  width: min(100%, 1240px);
   margin: 0 auto;
+  padding: .25rem;
 }
 
-h1 {
-  margin-bottom: 20px;
+.reservas-paciente h1 {
+  margin-bottom: 1.25rem;
 }
 
-table {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-  color: #1f2937;
-  background-color: #fff;
+.reservas-paciente p-button {
+  display: inline-block;
+  margin-bottom: 1.1rem;
 }
 
-th,
-td {
-  padding: 12px;
-  border: 1px solid #ddd;
-  text-align: left;
+.reservas-paciente > p {
+  color: var(--muted);
 }
 
-th {
-  color: #1f2937;
-  background-color: #e5e7eb;
+.reservas-paciente table {
+  margin-top: 1.1rem;
 }
 
-tbody tr:nth-child(odd) {
-  background-color: #fff;
+.reservas-paciente button:not(.p-button) {
+  background: #c74747;
+  border-color: #c74747;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f3f4f6;
+.reservas-paciente button:not(.p-button):hover {
+  background: #ad3939;
+  border-color: #ad3939;
 }
 
-tbody tr:hover {
-  background-color: #e5e7eb;
-}
-
-button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  background-color: #dc2626;
-  color: white;
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 760px) {
   .reservas-paciente {
-    padding: 16px;
     overflow-x: auto;
   }
 
-  table {
+  .reservas-paciente table {
     min-width: 700px;
   }
 }

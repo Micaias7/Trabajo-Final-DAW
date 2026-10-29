@@ -4,22 +4,95 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  margin: 1rem 0;
+  margin: 1rem 0 1.5rem;
 }
 
 .selector-fecha {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: .65rem;
+}
+
+.selector-fecha label {
+  color: var(--muted);
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.selector-fecha input,
+.selector-fecha select {
+  min-height: 42px;
+  padding: .65rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
 }
 
 .acciones {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem;
 }
 
-.nota {
-  color: #666;
-  font-size: 0.9rem;
-  margin-top: 1rem;
+.acciones button {
+  min-height: 42px;
+}
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+@media (max-width: 760px) {
+  .barra {
+    align-items: stretch;
+  }
+
+  .selector-fecha,
+  .acciones {
+    width: 100%;
+  }
+
+  .selector-fecha input,
+  .selector-fecha select {
+    max-width: 100%;
+  }
+
+  :host {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 700px;
+  }
+}
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1200px) {
+  :host {
+    padding: 40px 48px;
+  }
+}
+
+@media (max-width: 700px) {
+  :host {
+    padding: 20px 16px;
+  }
 }

@@ -1,31 +1,94 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #e8f5f3 0%, #f5f7fa 50%, #e9eef8 100%);
+}
+
+form {
+  width: 100%;
+  max-width: 440px;
 }
 
 #main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 55vh;
-    max-width: 20rem;
-    width: 80vw;
-    background-color: lightcyan;
-    border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 40px 32px;
+  background: #ffffff;
+  border: 1px solid #dce9e8;
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(20, 70, 75, 0.13);
 }
 
-#nombre{
-    margin-bottom: 1rem;
+#header {
+  margin: 0 0 8px;
+  color: #173c40;
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.7px;
 }
 
-#clave{
-    margin-bottom: 1rem;
+#header::after {
+  content: "Accedé para gestionar tus turnos";
+  display: block;
+  margin-top: 12px;
+  color: #728387;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
-#header{
-    text-align: center;
+#email {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  border-radius: 10px;
+}
+
+#clave {
+  display: block;
+  width: 100%;
+}
+
+:host ::ng-deep #clave .p-password,
+:host ::ng-deep #clave input,
+:host ::ng-deep p-password,
+:host ::ng-deep p-password input {
+  width: 100%;
+}
+
+:host ::ng-deep #main .p-button {
+  width: 100%;
+  min-height: 48px;
+  justify-content: center;
+  border: 1px solid #167d78;
+  border-radius: 10px;
+  background: #167d78;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+:host ::ng-deep #main .p-button:hover {
+  background: #116b67;
+  border-color: #116b67;
+}
+
+@media (max-width: 480px) {
+  :host {
+    padding: 16px;
+  }
+
+  #main {
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+
+  #header {
+    font-size: 24px;
+  }
 }

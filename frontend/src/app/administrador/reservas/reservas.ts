@@ -17,6 +17,7 @@ import { Template } from '../../template/template';
 })
 export class Reservas implements OnInit {
   private readonly reservasApi = inject(ReservasApiClient);
+  private readonly reservasApiCancelar = inject(ReservasApiClient)
   private readonly messageService = inject(MessageService);
 
   reservas = signal<ReservaAdministrador[]>([]);
@@ -48,7 +49,7 @@ export class Reservas implements OnInit {
 
     this.cancelandoId.set(reserva.id);
 
-    this.reservasApi.cancelarReserva(reserva.id).subscribe({
+    this.reservas(reserva.id).subscribe({
       next: (respuesta) => {
         this.cancelandoId.set(null);
         this.messageService.add({

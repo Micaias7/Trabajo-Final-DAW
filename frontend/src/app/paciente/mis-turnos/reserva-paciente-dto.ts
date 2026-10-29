@@ -1,4 +1,4 @@
-export interface ReservaPaciente {
+export interface ReservaPacienteDto {
   id: number;
   fechaHora: string;
   estado: string;

@@ -11,7 +11,7 @@ import { Medicos } from './administrador/medicos/medicos';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
-    {
+  {
     path: 'medico/mis-turnos',
     component: MisTurnos,
     canActivate: [rolGuard],
@@ -26,7 +26,7 @@ export const routes: Routes = [
   {
     path: 'paciente/turnos',
     loadComponent: () =>
-      import('./paciente/reservas/reservas').then(
+      import('./paciente/mis-turnos/reservas').then(
         (modulo) => modulo.ReservasPaciente
       ),
     canActivate: [rolGuard],

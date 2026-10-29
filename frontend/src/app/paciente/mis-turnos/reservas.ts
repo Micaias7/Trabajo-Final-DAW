@@ -1,22 +1,28 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { ReservasApiClient } from '../../compartido/reservas-api-client';
+import { ReservasApiClient as ReservasPacienteApiClient } from './reserva-api-client';
+import { ReservasApiClient as ReservasCompartidasApiClient } from '../../compartido/reservas-api-client';
 import { ReservaPacienteDto } from './reserva-paciente-dto';
 import { Template } from '../../template/template';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-reservas-paciente',
-  imports: [DatePipe, RouterLink, ButtonModule, Template],
+  imports: [DatePipe, CurrencyPipe, RouterLink, ButtonModule, Template, ConfirmDialogModule],
+  providers: [ConfirmationService],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
 })
 export class ReservasPaciente implements OnInit {
-  private readonly reservasApi = inject(ReservasApiClient);
+  private readonly reservasApi = inject(ReservasPacienteApiClient);
+  private readonly reservasApiCancelar = inject(ReservasCompartidasApiClient);
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   reservas = signal<ReservaPacienteDto[]>([]);
   cargando = signal(false);
@@ -59,6 +65,20 @@ export class ReservasPaciente implements OnInit {
     return Date.now() < inicioDiaTurno.getTime();
   }
 
+  confirmarCancelacion(reserva: ReservaPacienteDto): void {
+    this.confirmationService.confirm({
+      header: 'Confirmar cancelación',
+      message: '¿Estás seguro de que querés cancelar este turno?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, cancelar',
+      rejectLabel: 'Volver',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.cancelarReserva(reserva);
+      },
+    });
+  }
+
   cancelarReserva(reserva: ReservaPacienteDto): void {
     if (this.cancelandoId() !== null || !this.puedeCancelar(reserva)) {
       return;
@@ -66,7 +86,7 @@ export class ReservasPaciente implements OnInit {
 
     this.cancelandoId.set(reserva.id);
 
-    this.reservasApi.cancelarReserva(reserva.id).subscribe({
+    this.reservasApiCancelar.cancelarReserva(reserva.id).subscribe({
       next: (respuesta) => {
         this.cancelandoId.set(null);
         this.messageService.add({

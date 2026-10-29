@@ -1,4 +1,5 @@
 <app-template>
+  <p-confirmdialog />
   <section class="reservas-paciente">
     <h1>Mis turnos</h1>
     <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/paciente" />
@@ -28,19 +29,14 @@
               <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ reserva.medico }}</td>
               <td>{{ reserva.estado }}</td>
-              <td>{{ reserva.valorConsulta }}</td>
+              <td>{{ reserva.valorConsulta | currency:'ARS':'symbol':'1.0-0':'es-AR' }}</td>
               <td>
-                @if (puedeCancelar(reserva)) {
-                  <button
-                    type="button"
-                    (click)="cancelarReserva(reserva)"
-                    [disabled]="cancelandoId() !== null"
-                  >
-                    {{ cancelandoId() === reserva.id ? 'Cancelando...' : 'Cancelar turno' }}
-                  </button>
-                } @else {
-                  <span>—</span>
-                }
+                <p-button
+                  label="Cancelar"
+                  severity="danger"
+                  [disabled]="!puedeCancelar(reserva) || cancelandoId() === reserva.id"
+                  (onClick)="confirmarCancelacion(reserva)"
+                />
               </td>
             </tr>
           } @empty {

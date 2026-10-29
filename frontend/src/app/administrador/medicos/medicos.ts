@@ -23,7 +23,7 @@ export class Medicos implements OnInit {
   medicos = signal<MedicoListadoDto[]>([]);
   cargando = signal(false);
   medicoSeleccionado = signal<MedicoListadoDto | null>(null);
-  nuevoValor = signal<string>('');
+  nuevoValor = signal<number | null>(null);
   errorPrecio = signal('');
   guardando = signal(false);
 
@@ -53,20 +53,19 @@ export class Medicos implements OnInit {
 
   seleccionarMedico(medico: MedicoListadoDto): void {
     this.medicoSeleccionado.set(medico);
-    this.nuevoValor.set(String(medico.valor_consulta));
+    this.nuevoValor.set(Number(medico.valor_consulta));
     this.errorPrecio.set('');
   }
 
   cancelarEdicion(): void {
     this.medicoSeleccionado.set(null);
-    this.nuevoValor.set('');
+    this.nuevoValor.set(null);
     this.errorPrecio.set('');
   }
 
   validarPrecio(): boolean {
     const medico = this.medicoSeleccionado();
-    const valorIngresado = this.nuevoValor().trim();
-    const precio = Number(valorIngresado);
+    const precio = this.nuevoValor();
 
     this.errorPrecio.set('');
 
@@ -75,12 +74,12 @@ export class Medicos implements OnInit {
       return false;
     }
 
-    if (valorIngresado === '' || !Number.isSafeInteger(precio) || precio <= 0) {
+    if (precio === null || !Number.isSafeInteger(precio) || precio <= 0) {
       this.errorPrecio.set('El precio debe ser un número entero mayor que cero.');
       return false;
     }
 
-    if (precio === medico.valor_consulta) {
+    if (precio === Number(medico.valor_consulta)) {
       this.errorPrecio.set('El nuevo precio debe ser diferente al actual.');
       return false;
     }
@@ -98,7 +97,7 @@ export class Medicos implements OnInit {
 
     this.guardando.set(true);
 
-    this.medicosApi.actualizarValorConsulta(medico.id, Number(this.nuevoValor())).subscribe({
+    this.medicosApi.actualizarValorConsulta(medico.id, this.nuevoValor()!).subscribe({
       next: () => {
         this.guardando.set(false);
         this.cancelarEdicion();

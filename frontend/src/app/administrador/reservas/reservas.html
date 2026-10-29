@@ -7,6 +7,7 @@
 />
 
 <p-table
+  styleClass="reservas-table"
   [value]="reservas()"
   [tableStyle]="{ 'min-width': '50rem' }"
   [scrollable]="true"
@@ -38,6 +39,9 @@
             label="Cancelar"
             icon="pi pi-times"
             severity="danger"
+            [loading]="cancelandoId() === reserva.id"
+            [disabled]="cancelandoId() !== null"
+            (onClick)="cancelarReserva(reserva)"
           />
         }
       </td>

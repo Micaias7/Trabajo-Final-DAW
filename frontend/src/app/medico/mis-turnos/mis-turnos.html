@@ -1,18 +1,43 @@
 <app-template>
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/medico"
+  />
+
   <p-confirmdialog />
+
   <h2>Mis turnos</h2>
 
   <div class="barra">
-    <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/medico" />
-
     <div class="selector-fecha">
-      <label for="fecha-turnos">Fecha</label>
-      <p-datepicker
-        inputId="fecha-turnos"
-        [ngModel]="fecha()"
-        (ngModelChange)="cambiarFecha($event)"
-        dateFormat="dd/mm/yy"
-        [showIcon]="true"
+      <p-button
+        label="Día anterior"
+        icon="pi pi-chevron-left"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="diaAnterior()"
+      />
+
+      <div class="campo-fecha">
+        <label for="fecha-turnos">Fecha</label>
+
+        <p-datepicker
+          inputId="fecha-turnos"
+          [ngModel]="fecha()"
+          (ngModelChange)="cambiarFecha($event)"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+        />
+      </div>
+
+      <p-button
+        label="Día siguiente"
+        icon="pi pi-chevron-right"
+        iconPos="right"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="diaSiguiente()"
       />
     </div>
   </div>
@@ -38,10 +63,24 @@
     <ng-template #body let-turno>
       <tr>
         <td>{{ turno.fecha_hora | date: 'HH:mm' }}</td>
-        <td>{{ turno.paciente.apellidos }}, {{ turno.paciente.nombres }}</td>
+
+        <td>
+          {{ turno.paciente.apellidos }}, {{ turno.paciente.nombres }}
+        </td>
+
         <td>{{ turno.paciente.documento }}</td>
-        <td>$ {{ turno.valor_consulta | number: '1.0-0' : 'es-AR' }}</td>
-        <td><p-tag [value]="turno.estado" [severity]="severidad(turno.estado)" /></td>
+
+        <td>
+          $ {{ turno.valor_consulta | number: '1.0-0' : 'es-AR' }}
+        </td>
+
+        <td>
+          <p-tag
+            [value]="turno.estado"
+            [severity]="severidad(turno.estado)"
+          />
+        </td>
+
         <td class="acciones">
           <p-button
             label="Atendido"
@@ -50,6 +89,7 @@
             [disabled]="!puedeMarcar(turno)"
             (onClick)="confirmarCambioEstado(turno, 'ATENDIDO')"
           />
+
           <p-button
             label="Ausente"
             icon="pi pi-user-minus"
@@ -63,7 +103,9 @@
 
     <ng-template #emptymessage>
       <tr>
-        <td colspan="6">No tenés turnos reservados para esta fecha.</td>
+        <td colspan="6">
+          No tenés turnos reservados para esta fecha.
+        </td>
       </tr>
     </ng-template>
   </p-table>

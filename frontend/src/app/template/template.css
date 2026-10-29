@@ -1,38 +1,223 @@
+/* ==============================
+   ENCABEZADO PRINCIPAL
+   ============================== */
 #header {
   position: fixed;
   top: 0;
+  left: 0;
+  z-index: 1000;
   width: 100%;
-  height: 10vh;
-  background-color: lightcyan;
+  height: 88px;
+  background: #ffffff;
+  border-bottom: 1px solid #e1e8eb;
+  box-shadow: 0 2px 12px rgba(18, 42, 48, 0.05);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 0 32px;
+  box-sizing: border-box;
 }
 
+/* TÍTULO DEL SISTEMA CENTRADO */
 #nombre-de-proyecto {
-  font-size: 1rem;
+  margin: 0;
+  color: #173c40;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  max-width: 65%;
 }
 
+/* BOTÓN VOLVER: ARRIBA A LA IZQUIERDA */
+:host ::ng-deep #header p-button[routerLink] {
+  position: absolute !important;
+  top: 50% !important;
+  left: 32px !important;
+  right: auto !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  display: block !important;
+  z-index: 1100 !important;
+}
+
+/* CERRAR SESIÓN: ARRIBA A LA DERECHA */
+#header > p-button:not([routerLink]) {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+/* BOTONES DEL ENCABEZADO */
+:host ::ng-deep #header .p-button {
+  border-radius: 10px !important;
+  background: #167d78 !important;
+  border-color: #167d78 !important;
+  font-size: 0.95rem !important;
+  white-space: nowrap;
+}
+
+:host ::ng-deep #header .p-button:hover {
+  background: #116b67 !important;
+  border-color: #116b67 !important;
+}
+
+/* ==============================
+   CONTENIDO GENERAL
+   ============================== */
 #content {
   position: fixed;
-  margin-top: 10vh;
+  top: 88px;
+  left: 0;
   width: 100%;
-  height: 90vh;
-  padding: 1rem;
+  height: calc(100vh - 88px);
+  padding: 28px 40px;
+  box-sizing: border-box;
   overflow: auto;
 }
 
-::ng-deep .p-button {
-  font-size: 0.8rem !important;
+/* TÍTULOS DE LAS PANTALLAS */
+:host ::ng-deep #content h1 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 6px !important;
 }
 
-@media (min-width: 768px) {
-  #nombre-de-proyecto {
-    font-size: 1.5rem;
+/* BAJADA DEBAJO DEL TÍTULO */
+:host ::ng-deep #content h1 + p {
+  margin-top: 0 !important;
+}
+
+/* TÍTULOS SECUNDARIOS */
+:host ::ng-deep #content h2 {
+  font-size: 1.4rem;
+  line-height: 1.3;
+}
+
+/* ==============================
+   PANEL DE ADMINISTRACIÓN
+   ============================== */
+:host ::ng-deep .panel-administrador {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .panel-administrador > h1 {
+  text-align: center;
+  font-size: 2.1rem !important;
+  line-height: 1.2;
+  margin: 0 0 8px !important;
+}
+
+:host ::ng-deep .panel-administrador > p {
+  text-align: center;
+  font-size: 1rem;
+  margin: 0 0 24px !important;
+}
+
+/* TARJETAS DEL PANEL DE ADMINISTRACIÓN Y MÉDICO */
+:host ::ng-deep .panel-administrador .opciones,
+:host ::ng-deep .panel-medico .opciones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+:host ::ng-deep .panel-administrador .tarjeta,
+:host ::ng-deep .panel-medico .tarjeta {
+  min-width: 0;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+/* PANEL DEL MÉDICO */
+:host ::ng-deep .panel-medico {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .panel-medico > h1 {
+  text-align: center;
+  font-size: 2.1rem !important;
+  line-height: 1.2;
+  margin: 0 0 8px !important;
+}
+
+:host ::ng-deep .panel-medico > p {
+  text-align: center;
+  font-size: 1rem;
+  margin: 0 0 24px !important;
+}
+
+/* ==============================
+   TABLET
+   ============================== */
+@media (max-width: 900px) {
+  #content {
+    padding: 24px;
   }
 
-  ::ng-deep .p-button {
-    font-size: 1rem !important;
+  :host ::ng-deep .panel-administrador .opciones,
+  :host ::ng-deep .panel-medico .opciones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ==============================
+   CELULAR
+   ============================== */
+@media (max-width: 700px) {
+  #header {
+    height: 76px;
+    padding: 0 10px;
+  }
+
+  #nombre-de-proyecto {
+    font-size: 1rem;
+    max-width: 40%;
+  }
+
+  :host ::ng-deep #header p-button[routerLink] {
+    left: 10px !important;
+  }
+
+  #header > p-button:not([routerLink]) {
+    right: 10px;
+  }
+
+  #content {
+    top: 76px;
+    height: calc(100vh - 76px);
+    padding: 20px 16px;
+  }
+
+  :host ::ng-deep #header .p-button {
+    font-size: 0.72rem !important;
+    padding: 0.45rem !important;
+  }
+
+  :host ::ng-deep #content h1 {
+    font-size: 1.65rem !important;
+  }
+
+  :host ::ng-deep .panel-administrador .opciones,
+  :host ::ng-deep .panel-medico .opciones {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  :host ::ng-deep .panel-administrador .tarjeta,
+  :host ::ng-deep .panel-medico .tarjeta {
+    padding: 22px;
   }
 }

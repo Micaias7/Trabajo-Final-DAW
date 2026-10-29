@@ -8,10 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { Template } from '../../template/template';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-medicos',
-  imports: [TableModule, ButtonModule, InputNumberModule, FormsModule, RouterLink, Template],
+  imports: [TableModule, ButtonModule, InputNumberModule, FormsModule, RouterLink, Template, CurrencyPipe],
   templateUrl: './medicos.html',
   styleUrl: './medicos.css',
 })

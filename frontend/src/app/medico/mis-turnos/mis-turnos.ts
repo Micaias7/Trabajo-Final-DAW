@@ -11,7 +11,7 @@ import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { MedicoApiClient } from './medico-api-client';
 import { EstadoReserva, TurnoMedico } from './turno-medico-dto';
-import { formatearFechaISO, montoANumero } from './fechas-turnos.util';
+import { formatearFechaISO } from './fechas-turnos.util';
 import { Template } from '../../template/template';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
@@ -95,13 +95,7 @@ export class MisTurnos implements OnInit, OnDestroy {
       .obtenerTurnos(formatearFechaISO(fecha))
       .subscribe({
         next: (turnos) => {
-          this.turnos.set(
-            turnos.map((t) => ({
-              ...t,
-              valor_consulta: montoANumero(t.valor_consulta),
-            })),
-          );
-
+          this.turnos.set(turnos);
           this.cargando.set(false);
         },
         error: (error: HttpErrorResponse) => {

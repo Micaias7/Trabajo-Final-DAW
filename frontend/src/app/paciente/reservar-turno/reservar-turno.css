@@ -1,0 +1,140 @@
+
+:host {
+  display: block;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+h2 {
+  font-size: 28px;
+  color: #000;
+  font-weight: 700;
+  margin: 0 0 30px;
+}
+
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: white;
+  color: #333;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+
+form .horarios {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-top: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+
+.horario-btn {
+  flex-shrink: 0;
+  padding: 12px;
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+  background-color: white;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.horario-btn:hover {
+  background-color: #dbeafe;
+}
+
+.horario-btn.seleccionado {
+  background-color: #2563eb;
+  color: white;
+}
+
+
+:host ::ng-deep .p-button {
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+
+form > p-button {
+  display: block;
+  width: 100%;
+}
+
+form > p-button ::ng-deep .p-button {
+  width: 100%;
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+form > p-button ::ng-deep .p-button:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+
+:host > p-button {
+  display: block;
+  margin-bottom: 24px;
+}
+
+:host > p-button ::ng-deep .p-button {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+:host > p-button ::ng-deep .p-button:hover {
+  background-color: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  :host {
+    margin: 20px 15px;
+    padding: 20px;
+  }
+}

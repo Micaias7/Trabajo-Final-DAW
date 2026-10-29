@@ -1,0 +1,74 @@
+<h2>Reservar turno - Administrador</h2>
+
+<form (ngSubmit)="reservarTurno()">
+
+<div>
+  <label for="paciente">Seleccionar paciente:</label>
+
+  <select
+    id="paciente"
+    name="paciente"
+    [(ngModel)]="idPaciente"
+  >
+    <option [ngValue]="null">Seleccione un paciente</option>
+
+    @for (paciente of pacientes(); track paciente.id) {
+      <option [ngValue]="paciente.id">
+        {{ paciente.apellidos }}, {{ paciente.nombres }}
+        - DNI: {{ paciente.documento }}
+      </option>
+    }
+  </select>
+</div>
+
+<div>
+  <label for="medico">Seleccionar médico:</label>
+
+  <select
+    id="medico"
+    name="medico"
+    [(ngModel)]="idMedico"
+  >
+    <option [ngValue]="null">Seleccione un médico</option>
+
+    @for (medico of medicos(); track medico.id) {
+      <option [ngValue]="medico.id">
+        {{ medico.apellidos }}, {{ medico.nombres }}
+        - Matrícula: {{ medico.matricula }}
+      </option>
+    }
+  </select>
+</div>
+<div>
+  <label for="fecha">Fecha del turno:</label>
+
+  <input
+    type="date"
+    id="fecha"
+    name="fecha"
+    [(ngModel)]="fecha"
+    [min]="fechaMinima"
+    [max]="fechaMaxima"
+  />
+</div>
+<div>
+  <label>Horario del turno:</label>
+
+  <div class="horarios">
+    @for (horario of horarios; track horario) {
+      <button
+        type="button"
+        class="horario-btn"
+        [class.seleccionado]="hora === horario"
+        [disabled]="horarioOcupado(horario)"
+        (click)="hora = horario">
+        {{ horario }}
+      </button>
+    }
+  </div>
+</div>
+
+<div>
+  <button pButton type="submit">Reservar turno</button>
+</div>
+</form>

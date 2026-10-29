@@ -8,6 +8,8 @@ import { MisTurnos } from './medico/mis-turnos/mis-turnos';
 
 import { Reservas } from './administrador/reservas/reservas';
 import { Medicos } from './administrador/medicos/medicos';
+import { ReservarTurno } from './paciente/reservar-turno/reservar-turno';
+import { ReservarTurno as ReservarTurnoAdministrador } from './administrador/reservar-turno/reservar-turno';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -23,6 +25,14 @@ export const routes: Routes = [
     canActivate: [rolGuard],
     data: { rol: 'PACIENTE' },
   },
+
+  {
+  path: 'paciente/reservar-turno',
+  component: ReservarTurno,
+  canActivate: [rolGuard],
+  data: { rol: 'PACIENTE' },
+},
+
   {
     path: 'paciente/turnos',
     loadComponent: () =>
@@ -56,5 +66,13 @@ export const routes: Routes = [
     canActivate: [rolGuard],
     data: { rol: 'ADMINISTRADOR' },
   },
+
+  {
+  path: 'administrador/reservar-turno',
+  component: ReservarTurnoAdministrador,
+  canActivate: [rolGuard],
+  data: { rol: 'ADMINISTRADOR' },
+},
+
   { path: '**', redirectTo: 'login' },
 ];

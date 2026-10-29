@@ -160,6 +160,7 @@ export class ReservasService {
         for (const r of reservas) {
             const dto = new ListReservaAdministradorDTO();
             dto.id = r.id;
+            dto.idMedico = r.medico.id;
             dto.fechaHora = r.fecha_hora;
             dto.estado = r.estado;
             dto.medico = `${r.medico.usuario.nombres} ${r.medico.usuario.apellidos}`;

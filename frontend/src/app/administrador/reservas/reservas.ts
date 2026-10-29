@@ -11,6 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Template } from '../../template/template';
 import { ReservasApiClient as ReservasCompartidasApiClient } from '../../compartido/reservas-api-client';
 
+
 @Component({
   selector: 'app-reservas',
   imports: [DatePipe, CurrencyPipe, RouterLink, TableModule, ButtonModule, Template, ConfirmDialogModule],

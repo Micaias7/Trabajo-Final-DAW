@@ -1,0 +1,64 @@
+<h2>Reservar turno médico</h2>
+<p-button
+  label="Volver al panel principal"
+  icon="pi pi-arrow-left"
+  routerLink="/paciente"
+  severity="secondary"
+/>
+
+<form>
+<div>
+  <label for="idMedico">Médico:</label>
+
+  <select
+    id="idMedico"
+    name="idMedico"
+    [(ngModel)]="idMedico"
+  >
+    <option [ngValue]="null">Seleccioná un médico</option>
+
+    @for (medico of medicos(); track medico.id) {
+      <option [ngValue]="medico.id">
+        {{ medico.nombres }} {{ medico.apellidos }}
+      </option>
+    }
+  </select>
+</div>
+
+  
+  <div>
+  <label for="fecha">Fecha del turno:</label>
+
+ <input
+  type="date"
+  id="fecha"
+  name="fecha"
+  [(ngModel)]="fecha"
+  [min]="fechaMinima"
+  [max]="fechaMaxima"
+/>
+</div>
+<div>
+  <label>Seleccioná un horario:</label>
+
+  <div class="horarios">
+    @for (horario of horarios; track horario) {
+      <button
+        type="button"
+        class="horario-btn"
+        [class.seleccionado]="hora === horario"
+        (click)="hora = horario"
+      >
+        {{ horario }}
+      </button>
+    }
+  </div>
+</div>
+
+
+<p-button
+  label="Reservar turno"
+  type="button"
+  (onClick)="reservarTurno()"
+/>
+</form>

@@ -26,7 +26,7 @@ export class ReservasApiClient {
 
   obtenerReservasPaciente(): Observable<ReservaPaciente[]> {
     return this.http.get<ReservaPaciente[]>(`${this.apiUrl}/mis-turnos`);
-  }
+  }  //mover este bloque a paciente
 
   cancelarReserva(id: number): Observable<CancelarReservaResponse> {
     return this.http.patch<CancelarReservaResponse>(

@@ -21,7 +21,6 @@
       <th>Paciente</th>
       <th>Estado</th>
       <th>Valor consulta</th>
-      <th>Acciones</th>
     </tr>
   </ng-template>
 
@@ -33,24 +32,12 @@
       <td>{{ reserva.paciente }}</td>
       <td>{{ reserva.estado }}</td>
       <td>{{ reserva.valorConsulta }}</td>
-      <td>
-        @if (reserva.estado === 'ACTIVO') {
-          <p-button
-            label="Cancelar"
-            icon="pi pi-times"
-            severity="danger"
-            [loading]="cancelandoId() === reserva.id"
-            [disabled]="cancelandoId() !== null"
-            (onClick)="cancelarReserva(reserva)"
-          />
-        }
-      </td>
     </tr>
   </ng-template>
 
   <ng-template #emptymessage>
     <tr>
-      <td colspan="7">No hay reservas registradas.</td>
+      <td colspan="6">No hay reservas registradas.</td>
     </tr>
   </ng-template>
 </p-table>

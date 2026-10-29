@@ -1,1 +1,1 @@
-export { ReservasApiClient } from '../../reservas/reservas-api-client';
+export { ReservasApiClient } from '../../rutas-compartidas/reservas-api-client';

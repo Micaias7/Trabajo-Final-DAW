@@ -1,11 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { ReservasApiClient } from '../../reservas/reservas-api-client';
+import { ReservasApiClient } from '../../rutas-compartidas/reservas-api-client';
 import { ReservaPaciente } from './reserva-paciente-dto';
+
+interface CancelarReservaResponse {
+  mensaje: string;
+  idReserva: number;
+  estado: string;
+}
 
 @Component({
   selector: 'app-reservas-paciente',
@@ -14,6 +20,7 @@ import { ReservaPaciente } from './reserva-paciente-dto';
   styleUrl: './reservas.css',
 })
 export class ReservasPaciente implements OnInit {
+  private readonly http = inject(HttpClient);
   private readonly reservasApi = inject(ReservasApiClient);
   private readonly messageService = inject(MessageService);
 
@@ -65,7 +72,12 @@ export class ReservasPaciente implements OnInit {
 
     this.cancelandoId.set(reserva.id);
 
-    this.reservasApi.cancelarReserva(reserva.id).subscribe({
+    this.http
+      .patch<CancelarReservaResponse>(
+        `/api/v1/reservas/${reserva.id}/cancelar`,
+        {}
+      )
+      .subscribe({
       next: (respuesta) => {
         this.cancelandoId.set(null);
         this.messageService.add({
@@ -80,13 +92,19 @@ export class ReservasPaciente implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'No se pudo cancelar el turno',
-          detail: this.obtenerMensajeError(error),
+          detail: this.obtenerMensajeError(
+            error,
+            'Ocurrió un error al cancelar el turno.'
+          ),
         });
       },
     });
   }
 
-  private obtenerMensajeError(error: unknown): string {
+  private obtenerMensajeError(
+    error: unknown,
+    mensajePredeterminado = 'No se pudieron obtener las reservas.'
+  ): string {
     if (error instanceof HttpErrorResponse) {
       const mensaje = error.error?.message;
       if (typeof mensaje === 'string') {
@@ -94,6 +112,6 @@ export class ReservasPaciente implements OnInit {
       }
     }
 
-    return 'No se pudieron obtener las reservas.';
+    return mensajePredeterminado;
   }
 }

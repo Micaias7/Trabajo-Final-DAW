@@ -1,4 +1,9 @@
 <app-template>
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/administrador"
+  />
   <p-confirmdialog />
   <h2>Gestión de reservas</h2>
 
@@ -30,7 +35,7 @@
         <td>{{ reserva.medico }}</td>
         <td>{{ reserva.paciente }}</td>
         <td>{{ reserva.estado }}</td>
-        <td>{{ reserva.valorConsulta | currency:'ARS':'symbol':'1.0-0':'es-AR' }}</td>
+        <td>{{ reserva.valorConsulta | currency: 'ARS' : 'symbol' : '1.0-0' : 'es-AR' }}</td>
         <td>
           <p-button
             label="Cancelar"

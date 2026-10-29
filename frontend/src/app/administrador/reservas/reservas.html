@@ -1,49 +1,55 @@
 <app-template>
-  <h2>Gestión de reservas</h2>
+  <h1>Gestión de reservas</h1>
 
-  <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/administrador" />
+  <p>Consultá y cancelá los turnos registrados.</p>
 
-<p-table
-  styleClass="reservas-table"
-  [value]="reservas()"
-  [tableStyle]="{ 'min-width': '50rem' }"
-  [scrollable]="true"
-  scrollHeight="70vh"
->
-  <ng-template #header>
-    <tr>
-      <th>ID</th>
-      <th>Fecha y hora</th>
-      <th>Médico</th>
-      <th>Paciente</th>
-      <th>Estado</th>
-      <th>Valor consulta</th>
-      <th>Acciones</th>
-    </tr>
-  </ng-template>
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/administrador"
+  />
 
-  <ng-template #body let-reserva>
-    <tr>
-      <td>{{ reserva.id }}</td>
-      <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
-      <td>{{ reserva.medico }}</td>
-      <td>{{ reserva.paciente }}</td>
-      <td>{{ reserva.estado }}</td>
-      <td>{{ reserva.valorConsulta }}</td>
-      <td>
-        @if (reserva.estado === 'ACTIVO') {
-          <p-button
-            label="Cancelar"
-            icon="pi pi-times"
-            severity="danger"
-            [loading]="cancelandoId() === reserva.id"
-            [disabled]="cancelandoId() !== null"
-            (onClick)="cancelarReserva(reserva)"
-          />
-        }
-      </td>
-    </tr>
-  </ng-template>
+  <p-table
+    styleClass="reservas-table"
+    [value]="reservas()"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [scrollable]="true"
+    scrollHeight="70vh"
+  >
+    <ng-template #header>
+      <tr>
+        <th>ID</th>
+        <th>Fecha y hora</th>
+        <th>Médico</th>
+        <th>Paciente</th>
+        <th>Estado</th>
+        <th>Valor consulta</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-reserva>
+      <tr>
+        <td>{{ reserva.id }}</td>
+        <td>{{ reserva.fechaHora | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ reserva.medico }}</td>
+        <td>{{ reserva.paciente }}</td>
+        <td>{{ reserva.estado }}</td>
+        <td>{{ reserva.valorConsulta }}</td>
+        <td>
+          @if (reserva.estado === 'ACTIVO') {
+            <p-button
+              label="Cancelar"
+              icon="pi pi-times"
+              severity="danger"
+              [loading]="cancelandoId() === reserva.id"
+              [disabled]="cancelandoId() !== null"
+              (onClick)="cancelarReserva(reserva)"
+            />
+          }
+        </td>
+      </tr>
+    </ng-template>
 
     <ng-template #emptymessage>
       <tr>

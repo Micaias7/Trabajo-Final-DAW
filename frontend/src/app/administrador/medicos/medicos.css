@@ -1,111 +1,131 @@
-
-.gestion-medicos {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px;
-}
-
-.gestion-medicos h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.gestion-medicos > p {
-  color: #666;
-  margin-bottom: 30px;
-}
-
-.gestion-medicos h2 {
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-/* Tabla de médicos */
-.gestion-medicos table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.gestion-medicos th,
-.gestion-medicos td {
-  padding: 15px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.gestion-medicos th {
-  background-color: #f3f4f6;
-  font-weight: 600;
-}
-
-.gestion-medicos tr:hover {
-  background-color: #f9fafb;
-}
-
-/* Adaptación a pantallas pequeñas */
-@media (max-width: 768px) {
-  .gestion-medicos {
-    padding: 15px;
-  }
-
-  .gestion-medicos th,
-  .gestion-medicos td {
-    padding: 10px;
-  }
-}
-
-/* Formulario para modificar precios */
-.editor-precio {
-  background-color: white;
-  padding: 25px;
-  margin-top: 25px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.editor-precio h2 {
-  margin-top: 0;
-}
-
-.editor-precio label {
+:host {
   display: block;
-  margin-top: 20px;
-  margin-bottom: 8px;
-  font-weight: 600;
+  min-width: 0;
 }
 
-.editor-precio input {
+.contenedor-medicos {
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  padding: .25rem;
+}
+
+.barra-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+}
+
+.filtros input,
+.filtros select {
+  min-height: 42px;
+  padding: .65rem .8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
   width: 100%;
-  max-width: 250px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th,
+td {
+  padding: .95rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--surface-muted);
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover {
+  background: #f7fbfa;
+}
+
+@media (max-width: 700px) {
+  .barra-acciones,
+  .filtros {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filtros input,
+  .filtros select {
+    width: 100%;
+  }
+
+  table {
+    min-width: 680px;
+  }
+}
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 32px;
   box-sizing: border-box;
 }
 
-/* Botones */
-.gestion-medicos button {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 10px 8px 0 0;
+@media (min-width: 1200px) {
+  :host {
+    padding: 40px 48px;
+  }
 }
 
-.gestion-medicos button:hover {
-  background-color: #1d4ed8;
+@media (max-width: 700px) {
+  :host {
+    padding: 20px 16px;
+  }
 }
 
-.gestion-medicos button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* Evita que las tablas y el contenido se desborden */
+:host table {
+  max-width: 100%;
+}
+
+:host input,
+:host select,
+:host textarea {
+  max-width: 100%;
+}
+
+@media (max-width: 700px) {
+  :host table {
+    display: block;
+    overflow-x: auto;
+  }
 }

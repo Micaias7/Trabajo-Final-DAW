@@ -1,17 +1,18 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DatePicker } from 'primeng/datepicker';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { MedicoApiClient } from './medico-api-client';
 import { EstadoReserva, TurnoMedico } from './turno-medico-dto';
+import { formatearFechaISO, montoANumero } from './fechas-turnos.util';
 import { Template } from '../../template/template';
-import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 type SeveridadTag = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
@@ -34,10 +35,12 @@ type SeveridadTag = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
   templateUrl: './mis-turnos.html',
   styleUrl: './mis-turnos.css',
 })
-export class MisTurnos implements OnInit {
+export class MisTurnos implements OnInit, OnDestroy {
   private readonly medicoApi: MedicoApiClient = inject(MedicoApiClient);
   private readonly messageService: MessageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+
+  private suscripcionTurnos?: Subscription;
 
   fecha = signal<Date | null>(new Date());
   turnos = signal<TurnoMedico[]>([]);
@@ -47,40 +50,79 @@ export class MisTurnos implements OnInit {
     this.cargarTurnos();
   }
 
+  ngOnDestroy(): void {
+    this.suscripcionTurnos?.unsubscribe();
+  }
+
   cambiarFecha(nuevaFecha: Date | null): void {
     this.fecha.set(nuevaFecha);
     this.cargarTurnos();
   }
 
+  diaAnterior(): void {
+    const fechaActual = this.fecha() ?? new Date();
+    const nuevaFecha = new Date(fechaActual);
+
+    nuevaFecha.setDate(nuevaFecha.getDate() - 1);
+
+    this.cambiarFecha(nuevaFecha);
+  }
+
+  diaSiguiente(): void {
+    const fechaActual = this.fecha() ?? new Date();
+    const nuevaFecha = new Date(fechaActual);
+
+    nuevaFecha.setDate(nuevaFecha.getDate() + 1);
+
+    this.cambiarFecha(nuevaFecha);
+  }
+
   cargarTurnos(): void {
+    // Si el médico cambia de fecha rápido, se cancela la consulta anterior.
+    this.suscripcionTurnos?.unsubscribe();
+
     const fecha = this.fecha();
+
     if (!fecha) {
       this.turnos.set([]);
+      this.cargando.set(false);
       return;
     }
 
     this.cargando.set(true);
-    this.medicoApi.obtenerTurnos(this.formatearFecha(fecha)).subscribe({
-      next: (turnos) => {
-        this.turnos.set(
-          turnos.map((t) => ({ ...t, valor_consulta: this.aNumero(t.valor_consulta) })),
-        );
-        this.cargando.set(false);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.cargando.set(false);
-        this.turnos.set([]);
-        this.mostrarError(error, 'No se pudieron obtener los turnos');
-      },
-    });
+
+    this.suscripcionTurnos = this.medicoApi
+      .obtenerTurnos(formatearFechaISO(fecha))
+      .subscribe({
+        next: (turnos) => {
+          this.turnos.set(
+            turnos.map((t) => ({
+              ...t,
+              valor_consulta: montoANumero(t.valor_consulta),
+            })),
+          );
+
+          this.cargando.set(false);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.cargando.set(false);
+          this.turnos.set([]);
+          this.mostrarError(error, 'No se pudieron obtener los turnos');
+        },
+      });
   }
 
   marcar(turno: TurnoMedico, estado: 'ATENDIDO' | 'AUSENTE'): void {
     this.medicoApi.actualizarEstado(turno.id, estado).subscribe({
       next: (actualizado) => {
         this.turnos.update((lista) =>
-          lista.map((t) => (t.id === actualizado.id ? { ...t, estado: actualizado.estado } : t)),
+          lista.map((t) =>
+            t.id === actualizado.id
+              ? { ...t, estado: actualizado.estado }
+              : t,
+          ),
         );
+
         this.messageService.add({
           severity: 'success',
           summary: 'Turno actualizado',
@@ -93,7 +135,10 @@ export class MisTurnos implements OnInit {
     });
   }
 
-  confirmarCambioEstado(turno: TurnoMedico, estado: 'ATENDIDO' | 'AUSENTE'): void {
+  confirmarCambioEstado(
+    turno: TurnoMedico,
+    estado: 'ATENDIDO' | 'AUSENTE',
+  ): void {
     this.confirmationService.confirm({
       header: 'Confirmar cambio de estado',
       message: `¿Estás seguro de que querés marcar este turno como ${estado}?`,
@@ -106,9 +151,12 @@ export class MisTurnos implements OnInit {
     });
   }
 
-  // Solo se puede marcar un turno ACTIVO cuyo horario ya comenzó
+  // Solo se puede marcar un turno ACTIVO cuyo horario ya comenzó.
   puedeMarcar(turno: TurnoMedico): boolean {
-    return turno.estado === 'ACTIVO' && new Date(turno.fecha_hora).getTime() <= Date.now();
+    return (
+      turno.estado === 'ACTIVO' &&
+      new Date(turno.fecha_hora).getTime() <= Date.now()
+    );
   }
 
   severidad(estado: EstadoReserva): SeveridadTag {
@@ -124,38 +172,18 @@ export class MisTurnos implements OnInit {
     }
   }
 
-  private aNumero(valor: number | string): number {
-    if (typeof valor === 'number') return valor;
-
-    const limpio = String(valor ?? '').replace(/[^\d.,-]/g, '');
-    const posSeparador = Math.max(limpio.lastIndexOf('.'), limpio.lastIndexOf(','));
-
-    let texto: string;
-    if (posSeparador !== -1 && limpio.length - posSeparador - 1 === 2) {
-      // Los dos últimos dígitos son los centavos (formato money)
-      const entero = limpio.slice(0, posSeparador).replace(/[.,]/g, '');
-      texto = `${entero}.${limpio.slice(posSeparador + 1)}`;
-    } else {
-      texto = limpio.replace(/[.,]/g, '');
-    }
-
-    const numero = Number(texto);
-    return Number.isNaN(numero) ? 0 : numero;
-  }
-
-  private formatearFecha(fecha: Date): string {
-    const anio = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    const dia = String(fecha.getDate()).padStart(2, '0');
-    return `${anio}-${mes}-${dia}`;
-  }
-
-  private mostrarError(error: HttpErrorResponse, porDefecto: string): void {
+  private mostrarError(
+    error: HttpErrorResponse,
+    porDefecto: string,
+  ): void {
     const mensaje = error.error?.message;
+
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: Array.isArray(mensaje) ? mensaje.join('. ') : (mensaje ?? porDefecto),
+      detail: Array.isArray(mensaje)
+        ? mensaje.join('. ')
+        : (mensaje ?? porDefecto),
     });
   }
 }

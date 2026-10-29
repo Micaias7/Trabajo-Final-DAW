@@ -1,18 +1,34 @@
 <app-template>
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/medico"
+  ></p-button>
+
   <section class="panel-medico">
     <h1>Panel del médico</h1>
-    <p>Consultá tus turnos y registrá la asistencia de tus pacientes.</p>
+
+    <p>
+      Consultá tus turnos y registrá la asistencia de tus pacientes.
+    </p>
 
     <div class="opciones">
       <div class="tarjeta">
         <h2>📋 Mis turnos</h2>
 
         <p>
-          Consultá tus turnos por fecha y registrá si cada paciente fue atendido o estuvo ausente.
+          Consultá tus turnos por fecha y registrá si cada paciente fue
+          atendido o estuvo ausente.
         </p>
 
-        <button type="button" routerLink="/medico/mis-turnos">Ver mis turnos</button>
+        <button
+          type="button"
+          routerLink="/medico/mis-turnos"
+        >
+          Ver mis turnos
+        </button>
       </div>
     </div>
   </section>
 </app-template>
+```

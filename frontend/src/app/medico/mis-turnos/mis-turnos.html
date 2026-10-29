@@ -1,4 +1,5 @@
 <app-template>
+  <p-confirmdialog />
   <h2>Mis turnos</h2>
 
   <div class="barra">
@@ -47,14 +48,14 @@
             icon="pi pi-check"
             severity="success"
             [disabled]="!puedeMarcar(turno)"
-            (onClick)="marcar(turno, 'ATENDIDO')"
+            (onClick)="confirmarCambioEstado(turno, 'ATENDIDO')"
           />
           <p-button
             label="Ausente"
             icon="pi pi-user-minus"
             severity="warn"
             [disabled]="!puedeMarcar(turno)"
-            (onClick)="marcar(turno, 'AUSENTE')"
+            (onClick)="confirmarCambioEstado(turno, 'AUSENTE')"
           />
         </td>
       </tr>

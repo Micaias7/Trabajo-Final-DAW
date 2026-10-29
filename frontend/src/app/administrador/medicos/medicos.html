@@ -1,104 +1,110 @@
-<section class="gestion-medicos">
-  <h1>Gestión de médicos</h1>
-  
-  <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/administrador" />
+<app-template>
+  <section class="gestion-medicos">
+    <h1>Gestión de médicos</h1>
 
-  <p>Consultá los médicos registrados y modificá el valor de sus consultas.</p>
+    <p-button
+      label="Volver al panel principal"
+      icon="pi pi-arrow-left"
+      routerLink="/administrador"
+    />
 
-  <h2>Listado de médicos</h2>
+    <p>Consultá los médicos registrados y modificá el valor de sus consultas.</p>
 
-  @if (cargando()) {
-    <p>Cargando médicos...</p>
-  } @else {
-    <p-table
-      [value]="medicos()"
-      [tableStyle]="{ 'min-width': '50rem' }"
-      [scrollable]="true"
-      scrollHeight="70vh"
-    >
-      <ng-template #header>
-        <tr>
-          <th>Médico</th>
-          <th>Matrícula</th>
-          <th>Valor de consulta</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
+    <h2>Listado de médicos</h2>
 
-      <ng-template #body let-medico>
-        <tr>
-          <td>{{ medico.nombres }} {{ medico.apellidos }}</td>
-          <td>{{ medico.matricula }}</td>
-          <td>$ {{ medico.valor_consulta }}</td>
-          <td>
-            <p-button
-              label="Modificar precio"
-              icon="pi pi-pencil"
-              (onClick)="seleccionarMedico(medico)"
-            />
-          </td>
-        </tr>
-      </ng-template>
+    @if (cargando()) {
+      <p>Cargando médicos...</p>
+    } @else {
+      <p-table
+        [value]="medicos()"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [scrollable]="true"
+        scrollHeight="70vh"
+      >
+        <ng-template #header>
+          <tr>
+            <th>Médico</th>
+            <th>Matrícula</th>
+            <th>Valor de consulta</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
 
-      <ng-template #emptymessage>
-        <tr>
-          <td colspan="4">No hay médicos registrados.</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  }
+        <ng-template #body let-medico>
+          <tr>
+            <td>{{ medico.nombres }} {{ medico.apellidos }}</td>
+            <td>{{ medico.matricula }}</td>
+            <td>$ {{ medico.valor_consulta }}</td>
+            <td>
+              <p-button
+                label="Modificar precio"
+                icon="pi pi-pencil"
+                (onClick)="seleccionarMedico(medico)"
+              />
+            </td>
+          </tr>
+        </ng-template>
 
-  @if (medicoSeleccionado(); as medico) {
-    <div class="editor-precio">
-      <h2>Modificar precio de consulta</h2>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="4">No hay médicos registrados.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
 
-      <p>
-        <strong>Médico:</strong>
-        {{ medico.nombres }} {{ medico.apellidos }}
-      </p>
+    @if (medicoSeleccionado(); as medico) {
+      <div class="editor-precio">
+        <h2>Modificar precio de consulta</h2>
 
-      <p>
-        <strong>Matrícula:</strong>
-        {{ medico.matricula }}
-      </p>
+        <p>
+          <strong>Médico:</strong>
+          {{ medico.nombres }} {{ medico.apellidos }}
+        </p>
 
-      <p>
-        <strong>Valor actual:</strong>
-        $ {{ medico.valor_consulta }}
-      </p>
+        <p>
+          <strong>Matrícula:</strong>
+          {{ medico.matricula }}
+        </p>
 
-      <label for="nuevo-precio"> Nuevo valor de la consulta: </label>
+        <p>
+          <strong>Valor actual:</strong>
+          $ {{ medico.valor_consulta }}
+        </p>
 
-      <p-inputnumber
-        inputId="nuevo-precio"
-        [min]="1"
-        [minFractionDigits]="0"
-        [maxFractionDigits]="0"
-        [useGrouping]="false"
-        [ngModel]="nuevoValor() === '' ? null : +nuevoValor()"
-        (ngModelChange)="nuevoValor.set($event === null ? '' : $event.toString())"
-      />
+        <label for="nuevo-precio"> Nuevo valor de la consulta: </label>
 
-      @if (errorPrecio()) {
-        <p role="alert">{{ errorPrecio() }}</p>
-      }
+        <p-inputnumber
+          inputId="nuevo-precio"
+          [min]="1"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="0"
+          [useGrouping]="false"
+          [ngModel]="nuevoValor() === '' ? null : +nuevoValor()"
+          (ngModelChange)="nuevoValor.set($event === null ? '' : $event.toString())"
+        />
 
-      <p-button
-        label="Guardar cambios"
-        icon="pi pi-check"
-        [loading]="guardando()"
-        [disabled]="guardando()"
-        (onClick)="guardarPrecio()"
-      />
+        @if (errorPrecio()) {
+          <p role="alert">{{ errorPrecio() }}</p>
+        }
 
-      <p-button
-        label="Cancelar"
-        icon="pi pi-times"
-        severity="secondary"
-        [outlined]="true"
-        [disabled]="guardando()"
-        (onClick)="cancelarEdicion()"
-      />
-    </div>
-  }
-</section>
+        <p-button
+          label="Guardar cambios"
+          icon="pi pi-check"
+          [loading]="guardando()"
+          [disabled]="guardando()"
+          (onClick)="guardarPrecio()"
+        />
+
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          severity="secondary"
+          [outlined]="true"
+          [disabled]="guardando()"
+          (onClick)="cancelarEdicion()"
+        />
+      </div>
+    }
+  </section>
+</app-template>

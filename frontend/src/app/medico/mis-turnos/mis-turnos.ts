@@ -11,6 +11,8 @@ import { Tag } from 'primeng/tag';
 import { MedicoApiClient } from './medico-api-client';
 import { EstadoReserva, TurnoMedico } from './turno-medico-dto';
 import { Template } from '../../template/template';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 type SeveridadTag = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
 
@@ -26,13 +28,16 @@ type SeveridadTag = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
     DatePicker,
     Tag,
     Template,
+    ConfirmDialogModule,
   ],
+  providers: [ConfirmationService],
   templateUrl: './mis-turnos.html',
   styleUrl: './mis-turnos.css',
 })
 export class MisTurnos implements OnInit {
   private readonly medicoApi: MedicoApiClient = inject(MedicoApiClient);
   private readonly messageService: MessageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   fecha = signal<Date | null>(new Date());
   turnos = signal<TurnoMedico[]>([]);
@@ -84,6 +89,19 @@ export class MisTurnos implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.mostrarError(error, 'No se pudo actualizar el turno');
+      },
+    });
+  }
+
+  confirmarCambioEstado(turno: TurnoMedico, estado: 'ATENDIDO' | 'AUSENTE'): void {
+    this.confirmationService.confirm({
+      header: 'Confirmar cambio de estado',
+      message: `¿Estás seguro de que querés marcar este turno como ${estado}?`,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Confirmar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.marcar(turno, estado);
       },
     });
   }

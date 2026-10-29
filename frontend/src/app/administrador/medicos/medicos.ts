@@ -7,10 +7,11 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { RouterLink } from '@angular/router';
+import { Template } from '../../template/template';
 
 @Component({
   selector: 'app-medicos',
-  imports: [TableModule, ButtonModule, InputNumberModule, FormsModule, RouterLink],
+  imports: [TableModule, ButtonModule, InputNumberModule, FormsModule, RouterLink, Template],
   templateUrl: './medicos.html',
   styleUrl: './medicos.css',
 })

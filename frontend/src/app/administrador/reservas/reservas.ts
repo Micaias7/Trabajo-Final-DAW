@@ -6,10 +6,11 @@ import { RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
+import { Template } from '../../template/template';
 
 @Component({
   selector: 'app-reservas',
-  imports: [DatePipe, RouterLink, TableModule, ButtonModule],
+  imports: [DatePipe, RouterLink, TableModule, ButtonModule, Template],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
 })

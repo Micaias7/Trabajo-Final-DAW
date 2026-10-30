@@ -1,93 +1,131 @@
-<h2>Reservar turno - Administrador</h2>
-<p-button
-  label="Volver al panel principal"
-  icon="pi pi-arrow-left"
-  routerLink="/administrador"
-  severity="secondary"
-/>
-<form (ngSubmit)="reservarTurno()">
-  <div>
-    <label for="paciente">Seleccionar paciente:</label>
 
-    <select id="paciente" name="paciente" [(ngModel)]="idPaciente">
-      <option [ngValue]="null">Seleccione un paciente</option>
+<app-template>
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/administrador"
+    styleClass="p-button-primary"
+  />
 
-      @for (paciente of pacientes(); track paciente.id) {
-        <option [ngValue]="paciente.id">
-          {{ paciente.apellidos }}, {{ paciente.nombres }} - DNI: {{ paciente.documento }}
-        </option>
-      }
-    </select>
-  </div>
+  <section class="reservar-turno">
+    <h2>Reservar turno</h2>
 
-  <div>
-    <label for="medico">Seleccionar médico:</label>
+    <p class="descripcion">
+      Registrá una nueva reserva para un paciente.
+    </p>
 
-    <select
-      id="medico"
-      name="medico"
-      [(ngModel)]="idMedico"
-      (ngModelChange)="cargarHorariosOcupados()"
-    >
-      <option [ngValue]="null">Seleccione un médico</option>
+    <div class="formulario-contenedor">
+      <form (ngSubmit)="reservarTurno()">
 
-      @for (medico of medicos(); track medico.id) {
-        <option [ngValue]="medico.id">
-          {{ medico.apellidos }}, {{ medico.nombres }} - Matrícula: {{ medico.matricula }}
-        </option>
-      }
-    </select>
-  </div>
-  <div>
-    <label for="fecha">Fecha del turno:</label>
+        <div class="campo">
+          <label for="paciente">Seleccionar paciente:</label>
 
-    <input
-      type="date"
-      id="fecha"
-      name="fecha"
-      [(ngModel)]="fecha"
-      (ngModelChange)="cargarHorariosOcupados()"
-      [min]="fechaMinima"
-      [max]="fechaMaxima"
-    />
-  </div>
-  <div>
-    <label>Horario del turno:</label>
+          <select
+            id="paciente"
+            name="paciente"
+            [(ngModel)]="idPaciente"
+          >
+            <option [ngValue]="null">Seleccione un paciente</option>
 
-    <div class="horarios">
-      @for (horario of horarios; track horario) {
+            @for (paciente of pacientes(); track paciente.id) {
+              <option [ngValue]="paciente.id">
+                {{ paciente.apellidos }}, {{ paciente.nombres }} - DNI:
+                {{ paciente.documento }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="medico">Seleccionar médico:</label>
+
+          <select
+            id="medico"
+            name="medico"
+            [(ngModel)]="idMedico"
+            (ngModelChange)="cargarHorariosOcupados()"
+          >
+            <option [ngValue]="null">Seleccione un médico</option>
+
+            @for (medico of medicos(); track medico.id) {
+              <option [ngValue]="medico.id">
+                {{ medico.apellidos }}, {{ medico.nombres }} - Matrícula:
+                {{ medico.matricula }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="fecha">Fecha del turno:</label>
+
+          <input
+            type="date"
+            id="fecha"
+            name="fecha"
+            [(ngModel)]="fecha"
+            (ngModelChange)="cargarHorariosOcupados()"
+            [min]="fechaMinima"
+            [max]="fechaMaxima"
+          />
+        </div>
+
+        <div class="campo campo-horarios">
+          <label>Horario del turno:</label>
+
+          @if (cargandoHorarios()) {
+            <p class="mensaje-horarios">
+              Consultando horarios disponibles...
+            </p>
+          }
+
+          @if (errorHorarios()) {
+            <p class="mensaje-horarios error">
+              No se pudieron consultar los horarios.
+            </p>
+          }
+
+          <div class="horarios">
+            @for (horario of horarios; track horario) {
+              <button
+                type="button"
+                class="horario-btn"
+                [class.seleccionado]="hora === horario"
+                [disabled]="
+                  !idMedico ||
+                  !fecha ||
+                  cargandoHorarios() ||
+                  errorHorarios() ||
+                  horarioOcupado(horario) ||
+                  horarioPasado(horario)
+                "
+                (click)="hora = horario"
+              >
+                {{ horario }}
+              </button>
+            }
+          </div>
+        </div>
+
         <button
-          type="button"
-          class="horario-btn"
-          [class.seleccionado]="hora === horario"
+          type="submit"
+          class="btn-reservar"
           [disabled]="
-            !idMedico || !fecha || cargandoHorarios() || errorHorarios() || horarioOcupado(horario) || horarioPasado(horario)
+            !idPaciente ||
+            !idMedico ||
+            !fecha ||
+            !hora ||
+            cargandoHorarios() ||
+            errorHorarios() ||
+            horarioOcupado(hora) ||
+            horarioPasado(hora) ||
+            guardandoReserva()
           "
-          (click)="hora = horario"
         >
-          {{ horario }}
+          {{ guardandoReserva() ? 'Reservando...' : 'Reservar turno' }}
         </button>
-      }
-    </div>
-  </div>
 
-  <div>
-    <button
-      pButton
-      type="submit"
-      [disabled]="
-        !idPaciente ||
-        !idMedico ||
-        !fecha ||
-        !hora ||
-        cargandoHorarios() ||
-        errorHorarios() ||
-        horarioOcupado(hora) ||
-        horarioPasado(hora) ||
-        guardandoReserva()
-      "
-    >
-      Reservar turno
-    </button>
-  </div>
-</form>
+      </form>
+    </div>
+  </section>
+</app-template>

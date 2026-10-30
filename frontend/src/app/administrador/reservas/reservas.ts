@@ -11,10 +11,17 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Template } from '../../template/template';
 import { ReservasApiClient as ReservasCompartidasApiClient } from '../../compartido/reservas-api-client';
 
-
 @Component({
   selector: 'app-reservas',
-  imports: [DatePipe, CurrencyPipe, RouterLink, TableModule, ButtonModule, Template, ConfirmDialogModule],
+  imports: [
+    DatePipe,
+    CurrencyPipe,
+    RouterLink,
+    TableModule,
+    ButtonModule,
+    Template,
+    ConfirmDialogModule,
+  ],
   providers: [ConfirmationService],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
@@ -35,7 +42,14 @@ export class Reservas implements OnInit {
   cargarReservas(): void {
     this.reservasApi.obtenerReservasAdministrador().subscribe({
       next: (datos) => {
-        this.reservas.set(datos);
+        const reservasOrdenadas = [...datos].sort((a, b) => {
+          const fechaA = new Date(a.fechaHora).getTime();
+          const fechaB = new Date(b.fechaHora).getTime();
+
+          return fechaA - fechaB;
+        });
+
+        this.reservas.set(reservasOrdenadas);
       },
       error: (error) => {
         this.messageService.add({

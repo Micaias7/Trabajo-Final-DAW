@@ -21,4 +21,16 @@ export class ReservasApiClient {
     return this.http.get<ReservaPacienteDto[]>(`${this.apiUrl}/mis-turnos`);
   }
 
+  obtenerHorariosOcupados(idMedico: number, fecha: string): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.apiUrl}/horarios-ocupados`,
+      {
+        params: {
+          idMedico: idMedico.toString(),
+          fecha
+        }
+      }
+    );
+  }
+
 }

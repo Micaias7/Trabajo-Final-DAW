@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
@@ -7,26 +7,30 @@ import { MedicoListadoDto } from '../medicos/medico-listado-dto';
 import { PacientesApiClient } from '../pacientes/pacientes-api-client';
 import { PacienteListadoDto } from '../pacientes/paciente-listado-dto';
 import { ReservarTurnoApiClient } from './reservar-turno-api-client';
-import { ReservasApiClient } from '../reservas/reservas-api-client';
-import { ReservaAdministrador } from '../reservas/reserva-admin-dto';
+import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-reservar-turno',
-  imports: [ButtonModule, FormsModule],
+  imports: [ButtonModule, FormsModule, RouterLink],
   templateUrl: './reservar-turno.html',
   styleUrl: './reservar-turno.css',
 })
-export class ReservarTurno implements OnInit {
-
+export class ReservarTurno implements OnInit, OnDestroy {
   private readonly messageService = inject(MessageService);
   private readonly medicosApi = inject(MedicosApiClient);
   private readonly pacientesApi = inject(PacientesApiClient);
   private readonly reservasApi = inject(ReservarTurnoApiClient);
-  private readonly reservasConsultaApi = inject(ReservasApiClient);
 
-medicos = signal<MedicoListadoDto[]>([]);
-pacientes = signal<PacienteListadoDto[]>([]);
-reservas = signal<ReservaAdministrador[]>([]);
+  horariosOcupados = signal<string[]>([]);
+  cargandoHorarios = signal(false);
+  errorHorarios = signal(false);
+
+  private consultaHorarios?: Subscription;
+
+  medicos = signal<MedicoListadoDto[]>([]);
+  pacientes = signal<PacienteListadoDto[]>([]);
+  guardandoReserva = signal(false);
 
   idPaciente: number | null = null;
   idMedico: number | null = null;
@@ -34,24 +38,18 @@ reservas = signal<ReservaAdministrador[]>([]);
   fecha: string = '';
   hora: string = '';
 
-  horarios: string[] = [
-    '08:00',
-    '09:00',
-    '10:00',
-    '11:00',
-    '12:00',
-    '13:00',
-    '14:00',
-    '15:00'
-  ];
+  horarios: string[] = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
 
   fechaMinima: string = '';
   fechaMaxima: string = '';
 
+  ngOnDestroy(): void {
+    this.consultaHorarios?.unsubscribe();
+  }
+
   ngOnInit(): void {
     this.cargarMedicos();
     this.cargarPacientes();
-    this.cargarReservas();
 
     const hoy = new Date();
     const fechaLimite = new Date();
@@ -69,122 +67,146 @@ reservas = signal<ReservaAdministrador[]>([]);
     this.fechaMinima = formatearFecha(hoy);
     this.fechaMaxima = formatearFecha(fechaLimite);
   }
+
   cargarMedicos(): void {
-  this.medicosApi.obtenerMedicos().subscribe({
-    next: (datos) => {
-      this.medicos.set(datos);
-    },
-    error: (error) => {
-      console.error('Error al cargar médicos:', error);
+    this.medicosApi.obtenerMedicos().subscribe({
+      next: (datos) => {
+        this.medicos.set(datos);
+      },
+      error: (error) => {
+        console.error('Error al cargar médicos:', error);
 
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo obtener la lista de médicos.',
-      });
-    },
-    
-  });
-}
-
-cargarPacientes(): void {
-  this.pacientesApi.obtenerPacientes().subscribe({
-    next: (datos) => {
-      this.pacientes.set(datos);
-    },
-    error: (error) => {
-      console.error('Error al cargar pacientes:', error);
-
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo obtener la lista de pacientes.',
-      });
-    },
-  });
-}
-reservarTurno(): void {
-
-  if (
-    this.idPaciente === null ||
-    this.idMedico === null ||
-    !this.fecha ||
-    !this.hora
-  ) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Datos incompletos',
-      detail: 'Debe completar todos los campos.',
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo obtener la lista de médicos.',
+        });
+      },
     });
-    return;
   }
 
-  const fechaHora = `${this.fecha}T${this.hora}`;
+  cargarPacientes(): void {
+    this.pacientesApi.obtenerPacientes().subscribe({
+      next: (datos) => {
+        this.pacientes.set(datos);
+      },
+      error: (error) => {
+        console.error('Error al cargar pacientes:', error);
 
-  this.reservasApi.reservarTurno(
-    this.idPaciente,
-    this.idMedico,
-    fechaHora
-  ).subscribe({
-    next: () => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Reserva realizada',
-        detail: 'El turno se reservó correctamente.',
-      });
-
-      this.idPaciente = null;
-      this.idMedico = null;
-      this.fecha = '';
-      this.hora = '';
-      this.cargarReservas();
-    },
-    error: (error) => {
-      console.error('Error al reservar turno:', error);
-
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.error?.message || 'No se pudo reservar el turno.',
-      });
-    },
-  });
-}
-cargarReservas(): void {
-  this.reservasConsultaApi.obtenerReservasAdministrador().subscribe({
-    next: (datos) => {
-      this.reservas.set(datos);
-    },
-    error: (error) => {
-      console.error('Error al cargar reservas:', error);
-    },
-  });
-}
-horarioOcupado(horario: string): boolean {
-  if (this.idMedico === null || !this.fecha) {
-    return false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo obtener la lista de pacientes.',
+        });
+      },
+    });
   }
 
-  return this.reservas().some((reserva) => {
-    const fechaReserva = new Date(reserva.fechaHora);
+  horarioOcupado(horario: string): boolean {
+    return this.horariosOcupados().includes(horario);
+  }
 
-    const fechaLocal = [
-      fechaReserva.getFullYear(),
-      String(fechaReserva.getMonth() + 1).padStart(2, '0'),
-      String(fechaReserva.getDate()).padStart(2, '0')
-    ].join('-');
+  reservarTurno(): void {
+    if (this.guardandoReserva()) {
+      return;
+    }
 
-    const horaLocal = [
-      String(fechaReserva.getHours()).padStart(2, '0'),
-      String(fechaReserva.getMinutes()).padStart(2, '0')
-    ].join(':');
+    if (
+      this.idPaciente === null ||
+      this.idMedico === null ||
+      !this.fecha ||
+      !this.hora ||
+      this.cargandoHorarios() ||
+      this.errorHorarios() ||
+      this.horarioOcupado(this.hora) ||
+      this.horarioPasado(this.hora)
+    ) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Reserva no disponible',
+        detail: 'Completá los datos y seleccioná un horario disponible.',
+      });
+      return;
+    }
 
-    return (
-      reserva.idMedico === this.idMedico &&
-      fechaLocal === this.fecha &&
-      horaLocal === horario &&
-      reserva.estado === 'ACTIVO'
-    );
-  });
-}
+    const fechaHora = `${this.fecha}T${this.hora}`;
+    this.guardandoReserva.set(true);
+
+    this.reservasApi.reservarTurno(this.idPaciente, this.idMedico, fechaHora).subscribe({
+      next: () => {
+        this.guardandoReserva.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Reserva realizada',
+          detail: 'El turno se reservó correctamente.',
+        });
+
+        this.idPaciente = null;
+        this.idMedico = null;
+        this.fecha = '';
+        this.hora = '';
+
+        this.consultaHorarios?.unsubscribe();
+        this.horariosOcupados.set([]);
+        this.errorHorarios.set(false);
+      },
+      error: (error) => {
+        this.guardandoReserva.set(false);
+        console.error('Error al reservar turno:', error);
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.message || 'No se pudo reservar el turno.',
+        });
+      },
+    });
+  }
+
+  cargarHorariosOcupados(): void {
+    this.consultaHorarios?.unsubscribe();
+
+    this.hora = '';
+    this.horariosOcupados.set([]);
+    this.errorHorarios.set(false);
+
+    if (this.idMedico === null || !this.fecha) {
+      this.cargandoHorarios.set(false);
+      return;
+    }
+
+    this.cargandoHorarios.set(true);
+
+    this.consultaHorarios = this.reservasApi
+      .obtenerHorariosOcupados(this.idMedico, this.fecha)
+      .subscribe({
+        next: (horarios) => {
+          this.horariosOcupados.set(horarios);
+          this.cargandoHorarios.set(false);
+        },
+        error: (error) => {
+          console.error('Error al consultar horarios:', error);
+
+          this.errorHorarios.set(true);
+          this.cargandoHorarios.set(false);
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudieron consultar los horarios disponibles.',
+          });
+        },
+      });
+  }
+
+  horarioPasado(horario: string): boolean {
+    if (!this.fecha) {
+      return false;
+    }
+
+    const ahora = new Date();
+    const fechaHoraTurno = new Date(`${this.fecha}T${horario}:00`);
+
+    return fechaHoraTurno <= ahora;
+  }
 }

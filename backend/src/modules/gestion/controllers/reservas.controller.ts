@@ -1,5 +1,5 @@
-import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth, ApiOkResponse, ApiNotFoundResponse, ApiParam } from '@nestjs/swagger';
-import { Controller , Body, Post , Get, Patch, Param, ParseIntPipe, UseGuards , Req } from '@nestjs/common';
+import { ApiTags, ApiOperation,  ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiForbiddenResponse, ApiBearerAuth, ApiOkResponse, ApiNotFoundResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Controller , Body, Post , Get, Patch, Param, ParseIntPipe, UseGuards , Req, Query } from '@nestjs/common';
 import { ReservasService } from '../services/reservas.service.js';
 
 import { AuthGuard } from '../../auth/guards/auth.guard.js';
@@ -184,6 +184,67 @@ export class ReservasController {
             request.user.sub,
             idReserva,
             request.user.rol
+        );
+    }
+
+    @ApiOperation({
+        summary: 'Consultar horarios ocupados de un médico',
+        description:
+            'Permite a pacientes y administradores autenticados consultar ' +
+            'los horarios ocupados de un médico en una fecha determinada. ' +
+            'Solo se consideran reservas con estado ACTIVO. ' +
+            'No se exponen datos personales de los pacientes.',
+    })
+    @ApiQuery({
+        name: 'idMedico',
+        description: 'Identificador del médico',
+        required: true,
+        type: Number,
+        example: 1,
+    })
+    @ApiQuery({
+        name: 'fecha',
+        description: 'Fecha de consulta en formato YYYY-MM-DD',
+        required: true,
+        type: String,
+        example: '2026-11-02',
+    })
+    @ApiOkResponse({
+        description: 'Horarios ocupados obtenidos correctamente',
+        schema: {
+            type: 'array',
+            items: {
+                type: 'string',
+                example: '09:00',
+            },
+            example: ['09:00', '11:00', '14:00'],
+        },
+    })
+    @ApiBadRequestResponse({
+        description:
+            'El identificador del médico o el formato de la fecha no son válidos.',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Token ausente, inválido o expirado.',
+    })
+    @ApiForbiddenResponse({
+        description:
+            'El usuario no tiene permisos para consultar los horarios ocupados.',
+    })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(
+        RolesUsuariosEnum.PACIENTE,
+        RolesUsuariosEnum.ADMINISTRADOR
+    )
+    @Get('horarios-ocupados')
+    async obtenerHorariosOcupados(
+        @Query('idMedico', ParseIntPipe) idMedico: number,
+        @Query('fecha') fecha: string
+    ): Promise<string[]> {
+        return await this.reservasService.obtenerHorariosOcupados(
+            idMedico,
+            fecha
         );
     }
 

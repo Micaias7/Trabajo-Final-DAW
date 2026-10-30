@@ -105,9 +105,10 @@ form {
 }
 
 .horario-btn.seleccionado {
-  background: #167d78;
-  border-color: #167d78;
+  background: #0e6937;
+  border: 2px solid #062f2d;
   color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(26, 151, 145, 0.271);
 }
 
 .horario-btn:disabled {

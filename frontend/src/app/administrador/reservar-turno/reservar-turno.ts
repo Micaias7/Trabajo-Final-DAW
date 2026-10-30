@@ -9,10 +9,11 @@ import { PacienteListadoDto } from '../pacientes/paciente-listado-dto';
 import { ReservarTurnoApiClient } from './reservar-turno-api-client';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Template } from '../../template/template';
 
 @Component({
   selector: 'app-reservar-turno',
-  imports: [ButtonModule, FormsModule, RouterLink],
+  imports: [ButtonModule, FormsModule, RouterLink, Template],
   templateUrl: './reservar-turno.html',
   styleUrl: './reservar-turno.css',
 })
@@ -38,7 +39,16 @@ export class ReservarTurno implements OnInit, OnDestroy {
   fecha: string = '';
   hora: string = '';
 
-  horarios: string[] = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
+  horarios: string[] = [
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+  ];
 
   fechaMinima: string = '';
   fechaMaxima: string = '';
@@ -132,35 +142,38 @@ export class ReservarTurno implements OnInit, OnDestroy {
     const fechaHora = `${this.fecha}T${this.hora}`;
     this.guardandoReserva.set(true);
 
-    this.reservasApi.reservarTurno(this.idPaciente, this.idMedico, fechaHora).subscribe({
-      next: () => {
-        this.guardandoReserva.set(false);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Reserva realizada',
-          detail: 'El turno se reservó correctamente.',
-        });
+    this.reservasApi
+      .reservarTurno(this.idPaciente, this.idMedico, fechaHora)
+      .subscribe({
+        next: () => {
+          this.guardandoReserva.set(false);
 
-        this.idPaciente = null;
-        this.idMedico = null;
-        this.fecha = '';
-        this.hora = '';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Reserva realizada',
+            detail: 'El turno se reservó correctamente.',
+          });
 
-        this.consultaHorarios?.unsubscribe();
-        this.horariosOcupados.set([]);
-        this.errorHorarios.set(false);
-      },
-      error: (error) => {
-        this.guardandoReserva.set(false);
-        console.error('Error al reservar turno:', error);
+          this.idPaciente = null;
+          this.idMedico = null;
+          this.fecha = '';
+          this.hora = '';
 
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.error?.message || 'No se pudo reservar el turno.',
-        });
-      },
-    });
+          this.consultaHorarios?.unsubscribe();
+          this.horariosOcupados.set([]);
+          this.errorHorarios.set(false);
+        },
+        error: (error) => {
+          this.guardandoReserva.set(false);
+          console.error('Error al reservar turno:', error);
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.error?.message || 'No se pudo reservar el turno.',
+          });
+        },
+      });
   }
 
   cargarHorariosOcupados(): void {

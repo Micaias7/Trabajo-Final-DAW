@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable ,  NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 
 import { Reserva } from '../entities/reserva.entity.js';
 import { Usuario } from '../../auth/entities/usuario.entity.js';
@@ -242,6 +242,40 @@ export class ReservasService {
             throw new BadRequestException('El paciente no está activo');
         }
             return await this.crearReserva(dto.idPaciente, dto);
+    }
+
+    async obtenerHorariosOcupados(idMedico: number, fecha: string): Promise<string[]> {
+
+        // Validar que la fecha tenga formato YYYY-MM-DD
+        if (
+            !/^\d{4}-\d{2}-\d{2}$/.test(fecha) ||
+            Number.isNaN(new Date(`${fecha}T00:00:00`).getTime()) ||
+            new Date(`${fecha}T00:00:00`).toISOString().slice(0, 10) !== fecha
+        ) {
+            throw new BadRequestException('La fecha no es válida');
+        }
+
+        // Buscar reservas activas del médico en esa fecha
+        const reservas = await this.repository.find({
+            where: {
+                medico: { id: idMedico },
+                estado: EstadosReservasEnum.ACTIVO,
+                fecha_hora: Between(
+                    `${fecha}T00:00:00`,
+                    `${fecha}T23:59:59.999`
+                )
+            }
+        });
+
+        // Devolver solamente las horas ocupadas
+        return reservas.map((reserva) => {
+            const fechaTurno = new Date(reserva.fecha_hora);
+
+            return [
+                String(fechaTurno.getHours()).padStart(2, '0'),
+                String(fechaTurno.getMinutes()).padStart(2, '0')
+            ].join(':');
+        });
     }
 
 }

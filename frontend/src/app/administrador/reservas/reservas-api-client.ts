@@ -18,8 +18,6 @@ export class ReservasApiClient {
   private readonly apiUrl = '/api/v1/reservas';
 
   obtenerReservasAdministrador(): Observable<ReservaAdministrador[]> {
-    return this.http.get<ReservaAdministrador[]>(
-      `${this.apiUrl}/administrador`
-    );
+    return this.http.get<ReservaAdministrador[]>(`${this.apiUrl}/administrador`);
   }
-} 
+}

@@ -7,58 +7,75 @@
 />
 
 <form>
-<div>
-  <label for="idMedico">Médico:</label>
-
-  <select
-    id="idMedico"
-    name="idMedico"
-    [(ngModel)]="idMedico"
-  >
-    <option [ngValue]="null">Seleccioná un médico</option>
-
-    @for (medico of medicos(); track medico.id) {
-      <option [ngValue]="medico.id">
-        {{ medico.nombres }} {{ medico.apellidos }}
-      </option>
-    }
-  </select>
-</div>
-
-  
   <div>
-  <label for="fecha">Fecha del turno:</label>
+    <label for="idMedico">Médico:</label>
 
- <input
-  type="date"
-  id="fecha"
-  name="fecha"
-  [(ngModel)]="fecha"
-  [min]="fechaMinima"
-  [max]="fechaMaxima"
-/>
-</div>
-<div>
-  <label>Seleccioná un horario:</label>
+    <select
+      id="idMedico"
+      name="idMedico"
+      [(ngModel)]="idMedico"
+      (ngModelChange)="cargarHorariosOcupados()"
+    >
+      <option [ngValue]="null">Seleccioná un médico</option>
 
-  <div class="horarios">
-    @for (horario of horarios; track horario) {
-      <button
-        type="button"
-        class="horario-btn"
-        [class.seleccionado]="hora === horario"
-        (click)="hora = horario"
-      >
-        {{ horario }}
-      </button>
-    }
+      @for (medico of medicos(); track medico.id) {
+        <option [ngValue]="medico.id">{{ medico.nombres }} {{ medico.apellidos }}</option>
+      }
+    </select>
   </div>
-</div>
 
+  <div>
+    <label for="fecha">Fecha del turno:</label>
 
-<p-button
-  label="Reservar turno"
-  type="button"
-  (onClick)="reservarTurno()"
-/>
+    <input
+      type="date"
+      id="fecha"
+      name="fecha"
+      [(ngModel)]="fecha"
+      (ngModelChange)="cargarHorariosOcupados()"
+      [min]="fechaMinima"
+      [max]="fechaMaxima"
+    />
+  </div>
+  <div>
+    <label>Seleccioná un horario:</label>
+
+    <div class="horarios">
+      @for (horario of horarios; track horario) {
+        <button
+          type="button"
+          class="horario-btn"
+          [class.seleccionado]="hora === horario"
+          [disabled]="
+            errorHorarios() ||
+            !idMedico ||
+            !fecha ||
+            cargandoHorarios() ||
+            horarioOcupado(horario) ||
+            horarioPasado(horario)
+          "
+          (click)="hora = horario"
+        >
+          {{ horario }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <p-button
+    [label]="guardandoReserva() ? 'Reservando...' : 'Reservar turno'"
+    type="button"
+    [loading]="guardandoReserva()"
+    [disabled]="
+      errorHorarios() ||
+      !idMedico ||
+      !fecha ||
+      !hora ||
+      cargandoHorarios() ||
+      horarioOcupado(hora) ||
+      horarioPasado(hora) ||
+      guardandoReserva()
+    "
+    (onClick)="reservarTurno()"
+  />
 </form>

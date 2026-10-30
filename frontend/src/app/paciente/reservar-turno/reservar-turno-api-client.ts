@@ -8,12 +8,25 @@ import { ReservaCreada } from './reserva-creada-dto';
 })
 export class ReservarTurnoApiClient {
   private readonly http = inject(HttpClient);
-
+  
   private readonly apiUrl = '/api/v1/reservas';
-reservarTurno(idMedico: number, fechaHora: string): Observable<ReservaCreada> {
-  return this.http.post<ReservaCreada>(
-    this.apiUrl,
-    { idMedico, fechaHora }
-  );
-}
+
+  reservarTurno(idMedico: number, fechaHora: string): Observable<ReservaCreada> {
+    return this.http.post<ReservaCreada>(
+      this.apiUrl,
+      { idMedico, fechaHora }
+    );
+  }
+
+  obtenerHorariosOcupados(idMedico: number, fecha: string): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.apiUrl}/horarios-ocupados`,
+      {
+        params: {
+          idMedico: idMedico.toString(),
+          fecha
+        }
+      }
+    );
+  }
 }

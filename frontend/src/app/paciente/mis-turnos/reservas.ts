@@ -39,7 +39,14 @@ export class ReservasPaciente implements OnInit {
 
     this.reservasApi.obtenerReservasPaciente().subscribe({
       next: (datos) => {
-        this.reservas.set(datos);
+        const reservasOrdenadas = [...datos].sort((a, b) => {
+          const fechaA = new Date(a.fechaHora).getTime();
+          const fechaB = new Date(b.fechaHora).getTime();
+
+          return fechaA - fechaB;
+        });
+
+        this.reservas.set(reservasOrdenadas);
         this.cargando.set(false);
       },
       error: (error: unknown) => {

@@ -7,10 +7,11 @@ import { MedicosApiClient } from '../../administrador/medicos/medicos-api-client
 import { MedicoListadoDto } from '../../administrador/medicos/medico-listado-dto';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { Template } from '../../template/template';
 
 @Component({
   selector: 'app-reservar-turno',
-  imports: [ButtonModule, FormsModule, RouterLink],
+  imports: [ButtonModule, FormsModule, RouterLink, Template],
   templateUrl: './reservar-turno.html',
   styleUrl: './reservar-turno.css',
 })
@@ -181,3 +182,4 @@ export class ReservarTurno implements OnInit, OnDestroy {
     return fechaHoraTurno <= ahora;
   }
 }
+

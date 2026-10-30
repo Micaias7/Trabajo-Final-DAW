@@ -1,8 +1,15 @@
 <app-template>
   <p-confirmdialog />
+
+  <p-button
+    label="Volver al panel principal"
+    icon="pi pi-arrow-left"
+    routerLink="/paciente"
+    styleClass="p-button-primary"
+  />
+
   <section class="reservas-paciente">
     <h1>Mis turnos</h1>
-    <p-button label="Volver al panel principal" icon="pi pi-arrow-left" routerLink="/paciente" />
 
     @if (cargando()) {
       <p>Cargando turnos...</p>
